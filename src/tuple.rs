@@ -1,0 +1,260 @@
+use crate::comparison::ApproxEq;
+
+#[derive(Copy, Clone, Debug)]
+pub struct Tuple {
+    x: f32,
+    y: f32,
+    z: f32,
+    w: f32
+}
+
+impl Tuple {
+    fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
+        Tuple { x, y, z, w }
+    }
+
+    fn point(x: f32, y: f32, z: f32) -> Self {
+        Tuple {
+            x,
+            y,
+            z,
+            w: 1.0}
+    }
+
+    fn vector(x: f32, y: f32, z: f32) -> Self {
+        Tuple {
+            x,
+            y,
+            z,
+            w: 0.0}
+    }
+
+    fn x(&self) -> f32 {
+        self.x
+    }
+
+    fn y(&self) -> f32 {
+        self.y
+    }
+
+    fn z(&self) -> f32 {
+        self.z
+    }
+
+    fn w(&self) -> f32 {
+        self.w
+    }
+}
+
+impl PartialEq for Tuple {
+    fn eq(&self, compare_to: &Self) -> bool {
+        self.x.approx_eq(compare_to.x)
+            && self.y.approx_eq(compare_to.y)
+            && self.z.approx_eq(compare_to.z)
+    }
+}
+
+impl std::ops::Add for Tuple {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Tuple {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+            w: self.w + rhs.w
+        }
+    }
+}
+
+impl std::ops::Sub for Tuple {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Tuple {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+            w: self.w - rhs.w,
+        }
+    }
+}
+
+impl std::ops::Neg for Tuple {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Tuple {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+            w: -self.w,
+        }
+    }
+}
+
+impl std::ops::Mul<f32> for Tuple {
+    type Output = Self;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Tuple {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+            w: self.w
+        }
+    }
+}
+
+impl std::ops::Div<f32> for Tuple {
+    type Output = Self;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        Tuple {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+            w: self.w
+        }
+    }
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_create_point() {
+        // Create a point using the Tuple::point associated function
+        let point = Tuple::point(1.0, 2.0, 3.0);
+
+        // Access the components and assert their values
+        assert_eq!(point.x, 1.0);
+        assert_eq!(point.y(), 2.0);
+        assert_eq!(point.z(), 3.0);
+        assert_eq!(point.w(), 1.0);
+    }
+
+    #[test]
+    fn test_create_vector() {
+        // Create a point using the Tuple::point associated function
+        let vector = Tuple::vector(1.0, 2.0, 3.0);
+
+        // Access the components and assert their values
+        assert_eq!(vector.x(), 1.0);
+        assert_eq!(vector.y(), 2.0);
+        assert_eq!(vector.z(), 3.0);
+        assert_eq!(vector.w(), 0.0);
+    }
+
+    #[test]
+    fn test_add_vector_point() {
+        let point = Tuple::point(5.5, 2.5, 0.0);
+        let vector = Tuple::vector(1.0, 2.0, 3.0);
+
+        let expected = Tuple{
+            x: 6.5,
+            y: 4.5,
+            z: 3.0,
+            w: 1.0
+        };
+
+        let actual = point + vector;
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn subtract_point_from_point() {
+        let point = Tuple::point(3.0, 2.0, 1.0);
+        let vector = Tuple::point(5.0, 6.0, 7.0);
+
+        let expected = Tuple{
+            x: -2.0,
+            y: -4.0,
+            z: -6.0,
+            w: 0.0
+        };
+
+        let actual = point - vector;
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn subtract_vector_from_point() {
+        let point = Tuple::point(3.0, 2.0, 1.0);
+        let vector = Tuple::vector(5.0, 6.0, 7.0);
+
+        let expected = Tuple{
+            x: -2.0,
+            y: -4.0,
+            z: -6.0,
+            w: 1.0
+        };
+
+        let actual = point - vector;
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn subtract_vector_from_zero_vector() {
+        let zero = Tuple::vector(0.0, 0.0, 0.0);
+        let vector = Tuple::vector(1.0, -2.0, 3.0);
+
+        let expected = Tuple {
+            x: -1.0,
+            y: 2.0,
+            z: -3.0,
+            w: 0.0
+        };
+
+        let actual = zero - vector;
+
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn negate_tuple() {
+        let point = Tuple::new(1.0, -2.0, 3.0, -4.0);
+
+        let expected = Tuple::new(-1.0, 2.0, -3.0, 4.0);
+        let actual = -point;
+
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn multiply_with_scalar() {
+        let vector = Tuple::new(1.0, -2.0, 3.0, -4.0);
+        let scalar: f32 = 3.5;
+
+        let expected = Tuple::new(3.5, -7.0, 10.5, -14.0);
+        let actual = vector * scalar;
+
+        assert_eq!(actual, actual)
+    }
+
+    #[test]
+    fn multiply_with_fraction() {
+        let vector = Tuple::new(1.0, -2.0, 3.0, -4.0);
+        let scalar: f32 = 0.5;
+
+        let expected = Tuple::new(0.5, -1.0, 1.5, -2.0);
+        let actual = vector * scalar;
+
+        assert_eq!(actual, actual)
+    }
+
+    #[test]
+    fn divide_with_scalar() {
+        let vector = Tuple::new(1.0, -2.0, 3.0, -4.0);
+        let scalar: f32 = 2.0;
+
+        let expected = Tuple::new(0.5, -1.0, 1.5, -2.0);
+        let actual = vector / scalar;
+
+        assert_eq!(actual, expected)
+    }
+}
