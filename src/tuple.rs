@@ -29,6 +29,10 @@ impl Tuple {
             w: 0.0}
     }
 
+    fn magnitude(&self) -> f32 {
+        f32::sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
+    }
+
     fn x(&self) -> f32 {
         self.x
     }
@@ -254,6 +258,56 @@ mod tests {
 
         let expected = Tuple::new(0.5, -1.0, 1.5, -2.0);
         let actual = vector / scalar;
+
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn compute_magnitude_y() {
+        let vector = Tuple::vector(0.0, 1.0, 0.0);
+
+        let expected: f32 = 1.0;
+        let actual = vector.magnitude();
+
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn compute_magnitude_x() {
+        let vector = Tuple::vector(1.0, 0.0, 0.0);
+
+        let expected: f32 = 1.0;
+        let actual = vector.magnitude();
+
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn compute_magnitude_z() {
+        let vector = Tuple::vector(0.0, 0.0, 1.0);
+
+        let expected: f32 = 1.0;
+        let actual = vector.magnitude();
+
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn compute_magnitude_positive() {
+        let vector = Tuple::vector(1.0, 2.0, 3.0);
+
+        let expected: f32 = f32::sqrt(14.0);
+        let actual = vector.magnitude();
+
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn compute_magnitude_negative() {
+        let vector = Tuple::vector(-1.0, -2.0, -3.0);
+
+        let expected: f32 = f32::sqrt(14.0);
+        let actual = vector.magnitude();
 
         assert_eq!(actual, expected)
     }
