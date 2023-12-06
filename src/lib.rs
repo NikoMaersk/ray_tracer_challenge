@@ -1,4 +1,5 @@
-mod tuple;
+pub mod tuple;
+pub use tuple::Tuple;
 
 pub mod comparison {
     pub use epsilon::EPSILON;

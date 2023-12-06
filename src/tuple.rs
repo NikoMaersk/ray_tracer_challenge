@@ -13,7 +13,7 @@ impl Tuple {
         Tuple { x, y, z, w }
     }
 
-    fn point(x: f32, y: f32, z: f32) -> Self {
+    pub fn point(x: f32, y: f32, z: f32) -> Self {
         Tuple {
             x,
             y,
@@ -21,7 +21,7 @@ impl Tuple {
             w: 1.0}
     }
 
-    fn vector(x: f32, y: f32, z: f32) -> Self {
+    pub fn vector(x: f32, y: f32, z: f32) -> Self {
         Tuple {
             x,
             y,
@@ -29,23 +29,37 @@ impl Tuple {
             w: 0.0}
     }
 
-    fn magnitude(&self) -> f32 {
+    pub fn magnitude(&self) -> f32 {
         f32::sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
     }
 
-    fn x(&self) -> f32 {
+    pub fn normalize(&self) -> Tuple {
+        let mag = self.magnitude();
+
+        if mag != 0.0 {
+            *self / mag
+        } else {
+            *self
+        }
+    }
+
+    pub fn dot(&self, other: Self) -> f32 {
+        self.x * other.x + self.y * other.y + self.z * other.z
+    }
+
+    pub fn x(&self) -> f32 {
         self.x
     }
 
-    fn y(&self) -> f32 {
+    pub fn y(&self) -> f32 {
         self.y
     }
 
-    fn z(&self) -> f32 {
+    pub fn z(&self) -> f32 {
         self.z
     }
 
-    fn w(&self) -> f32 {
+    pub fn w(&self) -> f32 {
         self.w
     }
 }
@@ -109,6 +123,28 @@ impl std::ops::Mul<f32> for Tuple {
         }
     }
 }
+
+impl std::ops::Mul<Tuple> for f32 {
+    type Output = Tuple;
+
+    fn mul(self, rhs: Tuple) -> Self::Output {
+        rhs * self
+    }
+}
+
+impl std::ops::Mul for Tuple {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.y * rhs.z - self.z * rhs.y,
+            y: self.z * rhs.x - self.x * rhs.z,
+            z: self.x * rhs.y - self.y * rhs.x,
+            w: self.w
+        }
+    }
+}
+
 
 impl std::ops::Div<f32> for Tuple {
     type Output = Self;
@@ -310,5 +346,58 @@ mod tests {
         let actual = vector.magnitude();
 
         assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn normalize_simple_vector() {
+        let vector = Tuple::vector(4.0, 0.0, 0.0);
+
+        let expected = Tuple::vector(1.0, 0.0, 0.0);
+        let actual = vector.normalize();
+
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn normalize() {
+        let vector = Tuple::vector(1.0, 2.0, 3.0);
+
+        let expected = Tuple::vector(1.0 / f32::sqrt(14.0), 2.0 / f32::sqrt(14.0), 3.0 / f32::sqrt(14.0));
+        let actual = vector.normalize();
+
+        assert_eq!(actual, expected)
+    }
+
+    /*
+    #[test]
+    fn magnitude_of_normalized_vector() {
+        let vector = Tuple::vector(1.0, 2.0, 3.0);
+
+        assert_eq!(vector.normalize().magnitude(), 1.0)
+    }
+    */
+
+    #[test]
+    fn dot() {
+        let v1 = Tuple::vector(1.0, 2.0, 3.0);
+        let v2 = Tuple::vector(2.0, 3.0, 4.0);
+
+        let expected: f32 = 20.0;
+
+        assert_eq!(v1.dot(v2), expected)
+    }
+
+    #[test]
+    fn cross() {
+        let v1 = Tuple::vector(1.0, 2.0, 3.0);
+        let v2 = Tuple::vector(2.0, 3.0, 4.0);
+
+        let expected = Tuple::vector(-1.0, 2.0, -1.0);
+
+        assert_eq!(v1 * v2, expected);
+
+        let expected = Tuple::vector(1.0, -2.0, 1.0);
+
+        assert_eq!(v2 * v1, expected)
     }
 }
