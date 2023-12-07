@@ -132,6 +132,7 @@ impl std::ops::Mul<Tuple> for f32 {
     }
 }
 
+
 impl std::ops::Mul for Tuple {
     type Output = Self;
 

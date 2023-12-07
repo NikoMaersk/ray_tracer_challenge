@@ -1,4 +1,7 @@
 pub mod tuple;
+mod color;
+mod canvas;
+
 pub use tuple::Tuple;
 
 pub mod comparison {
