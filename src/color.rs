@@ -2,14 +2,34 @@ use crate::comparison::ApproxEq;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Color {
-    r: f32,
-    g: f32,
-    b: f32,
+    pub r: f32,
+    pub g: f32,
+    pub b: f32,
 }
 
 impl Color {
-    fn new(r: f32, g: f32, b: f32) -> Self {
+    pub fn new(r: f32, g: f32, b: f32) -> Self {
         Color { r, g, b }
+    }
+
+    pub fn black() -> Self {
+        Color { r: 0.0, g: 0.0, b: 0.0 }
+    }
+
+    pub fn white() -> Self {
+        Color { r: 1.0, g: 1.0, b: 1.0 }
+    }
+
+    pub fn red() -> Self {
+        Color { r: 1.0, g: 0.0, b: 0.0 }
+    }
+
+    pub fn green() -> Self {
+        Color { r: 0.0, g: 1.0, b: 0.0 }
+    }
+
+    pub fn blue() -> Self {
+        Color { r: 0.0, g: 0.0, b: 1.0 }
     }
 }
 
