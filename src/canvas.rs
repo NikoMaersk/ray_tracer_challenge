@@ -1,15 +1,19 @@
+use std::io;
+use std::io::{Write};
 use image::ImageResult;
 use crate::color::Color;
 
+#[derive(Debug, PartialEq)]
 pub struct Canvas {
     width: usize,
     height: usize,
     pixels: Vec<Color>
 }
 
+
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Self {
-        Canvas::new_with_color(width, height, Color::white())
+        Canvas::new_with_color(width, height, Color::black())
     }
 
     pub fn new_with_color(width: usize, height: usize, color: Color) -> Self {
@@ -33,6 +37,43 @@ impl Canvas {
 
     pub fn pixels(&mut self) -> &mut Vec<Color> {
         &mut self.pixels
+    }
+
+    fn construct_ppm_header(&self) -> String {
+        format!("P3\n{} {}\n{}", self.width, self.height, 255)
+    }
+
+    fn construct_ppm_body(&self) -> String {
+        let mut ppm = String::new();
+        for (i, pixel) in &mut self.pixels.iter().enumerate() {
+            if i > 0 && i % self.width == 0 {
+                ppm.push('\n');
+            }
+
+            let (r, g, b) = convert_color_u8(pixel);
+
+            ppm.push_str(&r.to_string());
+            ppm.push(' ');
+
+            ppm.push_str(&g.to_string());
+            ppm.push(' ');
+
+            ppm.push_str(&b.to_string());
+            ppm.push(' ');
+        }
+        ppm.push('\n');
+
+        ppm
+    }
+
+    pub fn export_ppm(&self, path: &str) -> io::Result<()> {
+        let ppm = format!("{}\n{}", self.construct_ppm_header(), self.construct_ppm_body());
+        let file_path = format!("{}/output.ppm", path);
+
+        let mut file = std::fs::File::create(file_path)?;
+        file.write_all(ppm.as_bytes())?;
+
+        Ok(())
     }
 
     pub fn export(&self, path: &str) -> ImageResult<()> {
@@ -91,5 +132,22 @@ mod tests {
         canvas.write_pixel(2, 3, red);
         let expected = Color::new(1.0, 0.0,  0.0);
         assert_eq!(canvas.pixel_at(2, 3), expected)
+    }
+
+    #[test]
+    fn construct_ppm_header() {
+        let mut canvas = Canvas::new(5, 3);
+        let header = canvas.construct_ppm_header();
+        let c1 = Color::new(1.5, 0.0, 0.0);
+        let c2 = Color::new(0.0, 0.5, 0.0);
+        let c3 = Color::new(-0.5, 0.0, 0.0);
+
+        canvas.write_pixel(0, 0, c1);
+        canvas.write_pixel(2, 1, c2);
+        canvas.write_pixel(4, 2, c3);
+        let expected = String::from("P3\n5 3\n255");
+        println!("{}", expected);
+        canvas.export_ppm(r#"C:\tmp"#).expect("Couldn't create file");
+        assert_eq!(header, expected)
     }
 }

@@ -168,10 +168,8 @@ mod tests {
 
     #[test]
     fn test_create_point() {
-        // Create a point using the Tuple::point associated function
         let point = Tuple::point(1.0, 2.0, 3.0);
 
-        // Access the components and assert their values
         assert_eq!(point.x, 1.0);
         assert_eq!(point.y(), 2.0);
         assert_eq!(point.z(), 3.0);
@@ -180,10 +178,8 @@ mod tests {
 
     #[test]
     fn test_create_vector() {
-        // Create a point using the Tuple::point associated function
         let vector = Tuple::vector(1.0, 2.0, 3.0);
 
-        // Access the components and assert their values
         assert_eq!(vector.x(), 1.0);
         assert_eq!(vector.y(), 2.0);
         assert_eq!(vector.z(), 3.0);

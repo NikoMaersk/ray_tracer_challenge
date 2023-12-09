@@ -1,6 +1,6 @@
 pub mod tuple;
-mod color;
-mod canvas;
+pub mod color;
+pub mod canvas;
 
 pub use tuple::Tuple;
 
