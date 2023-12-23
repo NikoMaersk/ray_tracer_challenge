@@ -5,8 +5,8 @@ use crate::color::Color;
 
 #[derive(Debug, PartialEq)]
 pub struct Canvas {
-    width: usize,
-    height: usize,
+    pub width: usize,
+    pub height: usize,
     pixels: Vec<Color>
 }
 

@@ -18,7 +18,8 @@ impl Tuple {
             x,
             y,
             z,
-            w: 1.0}
+            w: 1.0
+        }
     }
 
     pub fn vector(x: f32, y: f32, z: f32) -> Self {
@@ -26,7 +27,8 @@ impl Tuple {
             x,
             y,
             z,
-            w: 0.0}
+            w: 0.0
+        }
     }
 
     pub fn magnitude(&self) -> f32 {
