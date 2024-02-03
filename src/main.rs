@@ -1,6 +1,4 @@
 use ray_tracer_challenge::*;
-use ray_tracer_challenge::canvas::Canvas;
-use ray_tracer_challenge::color::Color;
 
 fn main() {
 
