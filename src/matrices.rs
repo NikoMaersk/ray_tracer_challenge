@@ -5,11 +5,47 @@ pub struct Matrix4 {
 }
 
 impl Matrix4 {
+
     fn new() -> Self {
         Matrix4 {
             matrix: [[0.0; 4]; 4]
         }
     }
+
+
+    fn identity_matrix() -> Self {
+        Matrix4 {
+            matrix: [
+                [1.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0]
+            ]
+        }
+    }
+
+
+    fn transpose(&self) -> Self {
+        let mut result = Matrix4::new();
+
+        for i in 0..self.matrix.len() {
+            for j in 0..self.matrix[0].len() {
+                result.matrix[i][j] = self.matrix[j][i]
+            }
+        }
+
+        result
+    }
+
+
+    fn transpose_mut(&mut self) {
+        for i in 0..self.matrix.len() {
+            for j in i + 1..self.matrix[0].len() {
+                (self.matrix[i][j], self.matrix[j][i]) = (self.matrix[j][i], self.matrix[i][j])
+            }
+        }
+    }
+
 }
 
 impl PartialEq for Matrix4 {
@@ -44,7 +80,7 @@ impl std::ops::Mul for Matrix4 {
         let mut result = Matrix4::new();
 
         for i in 0..result.matrix.len() {
-            for j in 0..result.matrix.len() {
+            for j in 0..result.matrix[0].len() {
                 for k in 0..result.matrix.len() {
                     result.matrix[i][j] += self.matrix[i][k] * rhs.matrix[k][j]
                 }
@@ -96,11 +132,15 @@ impl Matrix2 {
             matrix: [[0.0; 2]; 2]
         }
     }
+
+    fn determinant(&self) -> f32 {
+        self.matrix[0][0] * self.matrix[1][1] - self.matrix[0][1] * self.matrix[1][0]
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::matrices::Matrix4;
+    use crate::matrices::{Matrix2, Matrix4};
 
     #[test]
     fn create_4x4() {
@@ -115,7 +155,7 @@ mod tests {
     }
 
     #[test]
-    fn matrix_equality() {
+    fn matrix_eq() {
         let matrix_one = Matrix4 { matrix: [
             [1.0, 2.0, 3.0, 4.0],
             [5.0, 6.0, 7.0, 8.0],
@@ -133,6 +173,27 @@ mod tests {
         assert_eq!(matrix_one, matrix_two)
     }
 
+
+    #[test]
+    fn matrix_ne() {
+        let matrix_one = Matrix4 { matrix: [
+            [1.0, 2.0, 3.0, 4.0],
+            [5.0, 6.0, 7.0, 8.0],
+            [9.0, 8.0, 7.0, 6.0],
+            [5.0, 4.0, 3.0, 2.0]
+        ] };
+
+        let matrix_two = Matrix4 { matrix: [
+            [2.0, 2.0, 3.0, 4.0],
+            [5.0, 6.0, 7.0, 8.0],
+            [9.0, 8.0, 7.0, 6.0],
+            [5.0, 4.0, 3.0, 2.0]
+        ] };
+
+        assert_ne!(matrix_one, matrix_two)
+    }
+
+
     #[test]
     fn matrix_mul() {
         let matrix_one = Matrix4 { matrix: [
@@ -149,7 +210,8 @@ mod tests {
             [1.0, 2.0, 7.0, 8.0]
         ] };
 
-        let expected = Matrix4 { matrix: [
+
+         let expected = Matrix4 { matrix: [
             [20.0, 22.0, 50.0, 48.0],
             [44.0, 54.0, 114.0, 108.0],
             [40.0, 58.0, 110.0, 102.0],
@@ -157,5 +219,67 @@ mod tests {
         ]};
 
         assert_eq!(matrix_one * matrix_two, expected)
+    }
+
+
+    #[test]
+    fn identity_matrix_mul() {
+        let matrix = Matrix4 { matrix: [
+            [0.0, 1.0, 2.0, 4.0],
+            [1.0, 2.0, 4.0, 8.0],
+            [2.0, 4.0, 8.0, 16.0],
+            [4.0, 8.0, 16.0, 32.0]
+        ] };
+
+        let identity_matrix = Matrix4::identity_matrix();
+
+        assert_eq!(matrix * identity_matrix, matrix)
+    }
+
+    #[test]
+    fn transpose_matrix() {
+        let matrix = Matrix4 { matrix: [
+            [0.0, 9.0, 3.0, 0.0],
+            [9.0, 8.0, 0.0, 8.0],
+            [1.0, 8.0, 5.0, 3.0],
+            [0.0, 0.0, 5.0, 8.0]
+        ] };
+
+        let expected = Matrix4 { matrix: [
+            [0.0, 9.0, 1.0, 0.0],
+            [9.0, 8.0, 8.0, 0.0],
+            [3.0, 0.0, 5.0, 5.0],
+            [0.0, 8.0, 3.0, 8.0]
+        ]};
+
+        let actual = matrix.transpose();
+
+        assert_eq!(actual, expected)
+    }
+
+
+    #[test]
+    fn transpose_identity_matrix() {
+        let mut identity_matrix = Matrix4::identity_matrix();
+
+        let expected = Matrix4::identity_matrix();
+
+        identity_matrix.transpose_mut();
+
+        assert_eq!(identity_matrix, expected)
+    }
+
+    #[test]
+    fn determinant_matrix2() {
+        let matrix = Matrix2 { matrix: [
+            [1.0, 5.0],
+            [-3.0, 2.0]
+        ]};
+
+        let determinant = matrix.determinant();
+
+        let expected = 17.0;
+
+        assert_eq!(determinant, expected);
     }
 }
