@@ -46,12 +46,35 @@ impl Matrix4 {
         }
     }
 
+
+    fn submatrix(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix3 {
+        let mut result = Matrix3::new();
+        let mut submatrix_row = 0;
+
+        for i in 0..4 {
+            let mut submatrix_col = 0;
+
+            if row_to_remove == i { continue; }
+
+            for j in 0..4 {
+
+                if col_to_remove == j { continue; }
+                result.matrix[submatrix_row][submatrix_col] = self.matrix[i][j];
+                submatrix_col += 1;
+            }
+
+            submatrix_row += 1;
+        }
+
+        result
+    }
+
 }
 
 impl PartialEq for Matrix4 {
     fn eq(&self, other: &Self) -> bool {
-        for (row, row_other) in self.matrix.iter().zip(other.matrix.iter()) {
-            for (element_self, element_other) in row.iter().zip(row_other.iter()) {
+        for (row_self, row_other) in self.matrix.iter().zip(other.matrix.iter()) {
+            for (element_self, element_other) in row_self.iter().zip(row_other.iter()) {
                 if element_self != element_other {
                     return false;
                 }
@@ -119,7 +142,31 @@ impl Matrix3 {
             matrix: [[0.0; 3]; 3]
         }
     }
+
+
+    fn submatrix(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix2 {
+        let mut result = Matrix2::new();
+        let mut submatrix_row = 0;
+
+        for i in 0..3 {
+            let mut submatrix_col = 0;
+
+            if row_to_remove == i { continue; }
+
+            for j in 0..3 {
+
+                if col_to_remove == j { continue; }
+                result.matrix[submatrix_row][submatrix_col] = self.matrix[i][j];
+                submatrix_col += 1;
+            }
+
+            submatrix_row += 1;
+        }
+
+        result
+    }
 }
+
 
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix2 {
@@ -138,9 +185,22 @@ impl Matrix2 {
     }
 }
 
+impl PartialEq for Matrix2 {
+    fn eq(&self, other: &Self) -> bool {
+        for (row_self, row_other) in self.matrix.iter().zip(other.matrix.iter()) {
+            for (element_self, element_other) in row_self.iter().zip(row_other.iter()) {
+                if element_self != element_other {
+                    return false;
+                }
+            }
+        }
+        true
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::matrices::{Matrix2, Matrix4};
+    use crate::matrices::{Matrix2, Matrix3, Matrix4};
 
     #[test]
     fn create_4x4() {
@@ -281,5 +341,23 @@ mod tests {
         let expected = 17.0;
 
         assert_eq!(determinant, expected);
+    }
+
+    #[test]
+    fn submatrix() {
+        let matrix = Matrix3 { matrix: [
+            [1.0, 5.0, 0.0],
+            [-3.0, 2.0, 7.0],
+            [0.0, 6.0, -3.0]
+        ]};
+
+        let expected = Matrix2 { matrix: [
+            [-3.0, 2.0],
+            [0.0, 6.0]
+        ]};
+
+        let actual = matrix.submatrix(0, 2);
+
+        assert_eq!(actual, expected)
     }
 }
