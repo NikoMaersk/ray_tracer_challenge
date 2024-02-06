@@ -1,14 +1,14 @@
 
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix4 {
-    matrix: [[f32; 4]; 4]
+    matrix: [[f32; 4]; 4],
 }
 
 impl Matrix4 {
 
     fn new() -> Self {
         Matrix4 {
-            matrix: [[0.0; 4]; 4]
+            matrix: [[0.0; 4]; 4],
         }
     }
 
@@ -69,6 +69,31 @@ impl Matrix4 {
         result
     }
 
+
+    fn minor(&self, row: usize, col: usize) -> f32 {
+        self.submatrix(row, col).determinant()
+    }
+
+
+    fn cofactor(&self, row: usize, col: usize) -> f32 {
+        let minor = self.minor(row, col);
+
+        if (row + col) % 2 == 0 {
+            minor
+        } else {
+            -minor
+        }
+    }
+
+
+    fn determinant(&self) -> f32 {
+        let mut result = 0.0;
+        for i in 0..4 {
+            result += self.matrix[0][i] * self.cofactor(0, i)
+        }
+
+        result
+    }
 }
 
 impl PartialEq for Matrix4 {
@@ -161,6 +186,31 @@ impl Matrix3 {
             }
 
             submatrix_row += 1;
+        }
+
+        result
+    }
+
+
+    fn minor(&self, row: usize, col: usize) -> f32 {
+        self.submatrix(row, col).determinant()
+    }
+
+
+    fn cofactor(&self, row: usize, col: usize) -> f32 {
+        let minor = self.minor(row, col);
+        if (row + col) % 2 == 0 {
+            minor
+        } else {
+            -minor
+        }
+    }
+
+
+    fn determinant(&self) -> f32 {
+        let mut result = 0.0;
+        for i in 0..3 {
+            result += self.matrix[0][i] * self.cofactor(0, i);
         }
 
         result
@@ -359,5 +409,79 @@ mod tests {
         let actual = matrix.submatrix(0, 2);
 
         assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn minor_of_matrix3() {
+        let matrix = Matrix3 { matrix: [
+            [3.0, 5.0, 0.0],
+            [2.0, -1.0, -7.0],
+            [6.0, -1.0, 5.0]
+        ]};
+
+        let minor= matrix.minor(1, 0);
+
+        let determinant = 25.0;
+
+        assert_eq!(determinant, minor)
+    }
+
+    #[test]
+    fn cofactor_no_negation() {
+        let matrix = Matrix3 { matrix: [
+            [3.0, 5.0, 0.0],
+            [2.0, -1.0, -7.0],
+            [6.0, -1.0, 5.0]
+        ]};
+
+        let actual_cofactor = matrix.cofactor(0, 0);
+
+        let expected_cofactor = -12.0;
+
+        assert_eq!(actual_cofactor, expected_cofactor)
+    }
+
+    #[test]
+    fn cofactor_negation() {
+        let matrix = Matrix3 { matrix: [
+            [3.0, 5.0, 0.0],
+            [2.0, -1.0, -7.0],
+            [6.0, -1.0, 5.0]
+        ]};
+
+        let actual_cofactor = matrix.cofactor(1, 0);
+
+        let expected_cofactor = -25.0;
+
+        assert_eq!(actual_cofactor, expected_cofactor)
+    }
+
+    #[test]
+    fn determinant_minor3() {
+        let matrix = Matrix3 { matrix: [
+            [1.0, 2.0, 6.0],
+            [-5.0, 8.0, -4.0],
+            [2.0, 6.0, 4.0]
+        ]};
+
+        let actual_determinant = matrix.determinant();
+        let expected_determinant = -196.0;
+
+        assert_eq!(actual_determinant, expected_determinant)
+    }
+
+    #[test]
+    fn determinant_minor4() {
+        let matrix = Matrix4 { matrix: [
+            [-2.0, -8.0, 3.0, 5.0],
+            [-3.0, 1.0, 7.0, 3.0],
+            [1.0, 2.0, -9.0, 6.0],
+            [-6.0, 7.0, 7.0, -9.0]
+        ]};
+
+        let actual_determinant = matrix.determinant();
+        let expected_determinant = -4071.0;
+
+        assert_eq!(actual_determinant, expected_determinant)
     }
 }
