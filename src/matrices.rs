@@ -1,7 +1,8 @@
+use crate::comparison::ApproxEq;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix4 {
-    matrix: [[f32; 4]; 4],
+    pub matrix: [[f32; 4]; 4],
 }
 
 impl Matrix4 {
@@ -77,7 +78,6 @@ impl Matrix4 {
 
     fn cofactor(&self, row: usize, col: usize) -> f32 {
         let minor = self.minor(row, col);
-
         if (row + col) % 2 == 0 {
             minor
         } else {
@@ -94,13 +94,35 @@ impl Matrix4 {
 
         result
     }
+
+
+    pub fn inverse(&self) -> Option<Self> {
+
+        let determinant = self.determinant();
+
+        if determinant.approx_eq(0.0) {
+            return None
+        }
+
+        let mut result = Self::new();
+
+        for row in 0..self.matrix.len() {
+            for col in 0..self.matrix[0].len() {
+                let c = self.cofactor(row, col);
+
+                result.matrix[col][row] = c / determinant;
+            }
+        }
+
+        Some(result)
+    }
 }
 
 impl PartialEq for Matrix4 {
     fn eq(&self, other: &Self) -> bool {
         for (row_self, row_other) in self.matrix.iter().zip(other.matrix.iter()) {
             for (element_self, element_other) in row_self.iter().zip(row_other.iter()) {
-                if element_self != element_other {
+                if !element_self.approx_eq_low_precision(*element_other) {
                     return false;
                 }
             }
@@ -483,5 +505,114 @@ mod tests {
         let expected_determinant = -4071.0;
 
         assert_eq!(actual_determinant, expected_determinant)
+    }
+
+
+    #[test]
+    fn convertible_matrix4() {
+        let matrix = Matrix4 { matrix: [
+            [6.0, 4.0, 4.0, 4.0],
+            [5.0, 5.0, 7.0, 6.0],
+            [4.0, -9.0, 3.0, -7.0],
+            [9.0, 1.0, 7.0, -6.0]
+        ]};
+
+        let actual_determinant = matrix.determinant();
+
+        assert_ne!(actual_determinant, 0.0)
+    }
+
+
+    #[test]
+    fn non_convertible_matrix4() {
+        let matrix = Matrix4 { matrix: [
+            [-4.0, 2.0, -2.0, -3.0],
+            [9.0, 6.0, 2.0, 6.0],
+            [0.0, -5.0, 1.0, -5.0],
+            [0.0, 0.0, 0.0, 0.0]
+        ]};
+
+        let actual_determinant = matrix.determinant();
+
+        assert_eq!(actual_determinant, 0.0)
+    }
+
+
+    #[test]
+    fn inversion_matrix4_test1() {
+        let matrix = Matrix4 { matrix: [
+            [8.0, -5.0, 9.0, 2.0],
+            [7.0, 5.0, 6.0, 1.0],
+            [-6.0, 0.0, 9.0, 6.0],
+            [-3.0, 0.0, -9.0, -4.0],
+        ]};
+
+        let expected_inverse = Matrix4 {
+            matrix: [
+                [-0.15385, -0.15385, -0.28205, -0.53846],
+                [-0.07692, 0.12308, 0.02564, 0.03077],
+                [0.35897, 0.35897, 0.43590, 0.92308],
+                [-0.69231, -0.69231, -0.76923, -1.92308],
+            ]};
+
+        let actual_inverse = match matrix.inverse() {
+            Some(val) => val,
+            None => panic!("matrix is not invertible")
+        };
+
+        assert_eq!(actual_inverse, expected_inverse)
+    }
+
+
+    #[test]
+    fn inversion_matrix4_test2() {
+        let matrix = Matrix4 { matrix: [
+                [-5.0, 2.0, 6.0, -8.0],
+                [1.0, -5.0, 1.0, 8.0],
+                [7.0, 7.0, -6.0, -7.0],
+                [1.0, -3.0, 7.0, 4.0],
+            ]};
+
+        let expected_inverse = Matrix4 {
+            matrix: [
+                [0.21805, 0.45113, 0.24060, -0.04511],
+                [-0.80827, -1.45677, -0.44361, 0.52068],
+                [-0.07895, -0.22368, -0.05263, 0.19737],
+                [-0.52256, -0.81391, -0.30075, 0.30639],
+            ]};
+
+        let actual_inverse = match matrix.inverse() {
+            Some(val) => val,
+            None => panic!("matrix is not invertible")
+        };
+
+        assert_eq!(actual_inverse, expected_inverse)
+    }
+
+
+    #[test]
+    fn inversion_matrix4_test3() {
+        let matrix = Matrix4 {
+            matrix: [
+                [9.0, 3.0, 0.0, 9.0],
+                [-5.0, -2.0, -6.0, -3.0],
+                [-4.0, 9.0, 6.0, 4.0],
+                [-7.0, 6.0, 6.0, 2.0],
+            ]};
+
+        let expected_inverse = Matrix4 {
+            matrix: [
+                [-0.04074, -0.07778, 0.14444, -0.22222],
+                [-0.07778, 0.03333, 0.36667, -0.33333],
+                [-0.02901, -0.14630, -0.10926, 0.12963],
+                [0.17778, 0.06667, -0.26667, 0.33333],
+            ]};
+
+        let actual_inverse = match matrix.inverse() {
+            Some(val) => val,
+            None => panic!("matrix is not invertible")
+        };
+
+        assert_eq!(actual_inverse, expected_inverse)
     }
 }
