@@ -7,14 +7,14 @@ pub struct Matrix4 {
 
 impl Matrix4 {
 
-    fn new() -> Self {
+    pub fn new() -> Self {
         Matrix4 {
             matrix: [[0.0; 4]; 4],
         }
     }
 
 
-    fn identity_matrix() -> Self {
+    pub fn identity_matrix() -> Self {
         Matrix4 {
             matrix: [
                 [1.0, 0.0, 0.0, 0.0],
@@ -26,7 +26,7 @@ impl Matrix4 {
     }
 
 
-    fn transpose(&self) -> Self {
+    pub fn transpose(&self) -> Self {
         let mut result = Matrix4::new();
 
         for i in 0..self.matrix.len() {
@@ -39,7 +39,7 @@ impl Matrix4 {
     }
 
 
-    fn transpose_mut(&mut self) {
+    pub fn transpose_mut(&mut self) {
         for i in 0..self.matrix.len() {
             for j in i + 1..self.matrix[0].len() {
                 (self.matrix[i][j], self.matrix[j][i]) = (self.matrix[j][i], self.matrix[i][j])
@@ -48,7 +48,7 @@ impl Matrix4 {
     }
 
 
-    fn submatrix(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix3 {
+    pub fn submatrix(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix3 {
         let mut result = Matrix3::new();
         let mut submatrix_row = 0;
 
@@ -71,12 +71,12 @@ impl Matrix4 {
     }
 
 
-    fn minor(&self, row: usize, col: usize) -> f32 {
+    pub fn minor(&self, row: usize, col: usize) -> f32 {
         self.submatrix(row, col).determinant()
     }
 
 
-    fn cofactor(&self, row: usize, col: usize) -> f32 {
+    pub fn cofactor(&self, row: usize, col: usize) -> f32 {
         let minor = self.minor(row, col);
         if (row + col) % 2 == 0 {
             minor
@@ -86,7 +86,7 @@ impl Matrix4 {
     }
 
 
-    fn determinant(&self) -> f32 {
+    pub fn determinant(&self) -> f32 {
         let mut result = 0.0;
         for i in 0..4 {
             result += self.matrix[0][i] * self.cofactor(0, i)
@@ -191,7 +191,7 @@ impl Matrix3 {
     }
 
 
-    fn submatrix(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix2 {
+    pub fn submatrix(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix2 {
         let mut result = Matrix2::new();
         let mut submatrix_row = 0;
 
@@ -214,12 +214,12 @@ impl Matrix3 {
     }
 
 
-    fn minor(&self, row: usize, col: usize) -> f32 {
+    pub fn minor(&self, row: usize, col: usize) -> f32 {
         self.submatrix(row, col).determinant()
     }
 
 
-    fn cofactor(&self, row: usize, col: usize) -> f32 {
+    pub fn cofactor(&self, row: usize, col: usize) -> f32 {
         let minor = self.minor(row, col);
         if (row + col) % 2 == 0 {
             minor
@@ -229,7 +229,7 @@ impl Matrix3 {
     }
 
 
-    fn determinant(&self) -> f32 {
+    pub fn determinant(&self) -> f32 {
         let mut result = 0.0;
         for i in 0..3 {
             result += self.matrix[0][i] * self.cofactor(0, i);
@@ -246,13 +246,13 @@ pub struct Matrix2 {
 }
 
 impl Matrix2 {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Matrix2 {
             matrix: [[0.0; 2]; 2]
         }
     }
 
-    fn determinant(&self) -> f32 {
+    pub fn determinant(&self) -> f32 {
         self.matrix[0][0] * self.matrix[1][1] - self.matrix[0][1] * self.matrix[1][0]
     }
 }
@@ -614,5 +614,33 @@ mod tests {
         };
 
         assert_eq!(actual_inverse, expected_inverse)
+    }
+
+
+    #[test]
+    fn multiply_product_inverse() {
+        let matrix_a = Matrix4 {
+            matrix: [
+                [3.0, -9.0, 7.0, 3.0],
+                [3.0, -8.0, 2.0, -9.0],
+                [-4.0, 4.0, 4.0, 1.0],
+                [-6.0, 5.0, -1.0, 1.0],
+            ],
+        };
+
+        let matrix_b = Matrix4 {
+            matrix: [
+                [8.0, 2.0, 2.0, 2.0],
+                [3.0, -1.0, 7.0, 0.0],
+                [7.0, 0.0, 5.0, 4.0],
+                [6.0, -2.0, 0.0, 5.0],
+            ],
+        };
+
+        let matrix_c = matrix_a * matrix_b;
+
+        let reverse = matrix_c * matrix_b.inverse().unwrap();
+
+        assert_eq!(matrix_a, reverse)
     }
 }

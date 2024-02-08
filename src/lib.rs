@@ -2,10 +2,12 @@ pub mod tuple;
 pub mod color;
 pub mod canvas;
 pub mod matrices;
+mod transformation;
 
 pub use tuple::Tuple;
 pub use canvas::Canvas;
 pub use color::Color;
+pub use matrices::*;
 
 pub mod comparison {
     pub mod epsilon;
