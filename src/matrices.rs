@@ -1,4 +1,6 @@
 use crate::comparison::ApproxEq;
+use crate::Tuple;
+
 
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix4 {
@@ -175,6 +177,58 @@ impl std::ops::Mul for Matrix4 {
         }
 
         result
+    }
+}
+
+
+impl std::ops::Mul<Matrix4> for Tuple {
+    type Output = Tuple;
+
+    fn mul(self, rhs: Matrix4) -> Self::Output {
+        Tuple::new(
+            rhs.matrix[0][0] * self.x() +
+                rhs.matrix[0][1] * self.y() +
+                rhs.matrix[0][2] * self.z() +
+                rhs.matrix[0][3] * self.w(),
+            rhs.matrix[1][0] * self.x() +
+                rhs.matrix[1][1] * self.y() +
+                rhs.matrix[1][2] * self.z() +
+                rhs.matrix[1][3] * self.w(),
+            rhs.matrix[2][0] * self.x() +
+                rhs.matrix[2][1] * self.y() +
+                rhs.matrix[2][2] * self.z() +
+                rhs.matrix[2][3] * self.w(),
+            rhs.matrix[3][0] * self.x() +
+                rhs.matrix[3][1] * self.y() +
+                rhs.matrix[3][2] * self.z() +
+                rhs.matrix[3][3] * self.w()
+        )
+    }
+}
+
+
+impl std::ops::Mul<Tuple> for Matrix4 {
+    type Output = Tuple;
+
+    fn mul(self, rhs: Tuple) -> Self::Output {
+        Tuple::new(
+            self.matrix[0][0] * rhs.x() +
+                self.matrix[0][1] * rhs.y() +
+                self.matrix[0][2] * rhs.z() +
+                self.matrix[0][3] * rhs.w(),
+            self.matrix[1][0] * rhs.x() +
+                self.matrix[1][1] * rhs.y() +
+                self.matrix[1][2] * rhs.z() +
+                self.matrix[1][3] * rhs.w(),
+            self.matrix[2][0] * rhs.x() +
+                self.matrix[2][1] * rhs.y() +
+                self.matrix[2][2] * rhs.z() +
+                self.matrix[2][3] * rhs.w(),
+            self.matrix[3][0] * rhs.x() +
+                self.matrix[3][1] * rhs.y() +
+                self.matrix[3][2] * rhs.z() +
+                self.matrix[3][3] * rhs.w()
+        )
     }
 }
 
