@@ -56,6 +56,20 @@ fn rotation_z(radian: f32) -> Matrix4 {
 }
 
 
+fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix4 {
+    let mut result = Matrix4::identity_matrix();
+
+    result.matrix[0][1] = xy;
+    result.matrix[0][2] = xz;
+    result.matrix[1][0] = yx;
+    result.matrix[1][2] = yz;
+    result.matrix[2][0] = zx;
+    result.matrix[2][1] = zy;
+
+    result
+}
+
+
 #[cfg(test)]
 mod tests {
     use crate::transformation::*;
@@ -71,7 +85,7 @@ mod tests {
 
         let expected = Tuple::point(2.0, 1.0, 7.0);
 
-        assert_eq!(point * transform, expected)
+        assert_eq!(transform * point, expected)
     }
 
     #[test]
@@ -94,7 +108,7 @@ mod tests {
 
         let expected = Tuple::vector(-3.0, 4.0, 5.0);
 
-        assert_eq!(vector * transform, expected)
+        assert_eq!(transform * vector, expected)
     }
 
     #[test]
@@ -105,7 +119,7 @@ mod tests {
 
         let expected = Tuple::point(-8.0, 18.0, 32.0);
 
-        assert_eq!(point * scaling, expected)
+        assert_eq!(scaling * point, expected)
     }
 
     #[test]
@@ -116,7 +130,7 @@ mod tests {
 
         let expected = Tuple::vector(-8.0, 18.0, 32.0);
 
-        assert_eq!(vector * scaling, expected)
+        assert_eq!(scaling * vector, expected)
     }
 
     #[test]
@@ -128,7 +142,7 @@ mod tests {
 
         let expected = Tuple::vector(-2.0, 2.0, 2.0);
 
-        assert_eq!(vector * inverse, expected)
+        assert_eq!(inverse * vector, expected)
     }
 
     #[test]
@@ -139,7 +153,7 @@ mod tests {
 
         let expected = Tuple::vector(-2.0, 3.0, 4.0);
 
-        assert_eq!(point * scaling, expected)
+        assert_eq!(scaling * point, expected)
     }
 
     #[test]
@@ -197,5 +211,77 @@ mod tests {
 
         let expected_full = Tuple::point(-1.0, 0.0, 0.0);
         assert_eq!(full_quarter * point, expected_full)
+    }
+
+
+    #[test]
+    fn shearing_xy() {
+        let transform = shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+        let point = Tuple::point(2.0, 3.0, 4.0);
+
+        let expected = Tuple::point(5.0, 3.0, 4.0);
+
+        assert_eq!(transform * point, expected)
+    }
+
+
+    #[test]
+    fn shearing_xz() {
+        let transform = shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+
+        let point = Tuple::point(2.0, 3.0, 4.0);
+
+        let expected = Tuple::point(6.0, 3.0, 4.0);
+
+        assert_eq!(transform * point, expected)
+    }
+
+
+    #[test]
+    fn shearing_yx() {
+        let transform = shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+
+        let point = Tuple::point(2.0, 3.0, 4.0);
+
+        let expected = Tuple::point(2.0, 5.0, 4.0);
+
+        assert_eq!(transform * point, expected)
+    }
+
+
+    #[test]
+    fn shearing_yz() {
+        let transform = shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+
+        let point = Tuple::point(2.0, 3.0, 4.0);
+
+        let expected = Tuple::point(2.0, 7.0, 4.0);
+
+        assert_eq!(transform * point, expected)
+    }
+
+
+    #[test]
+    fn shearing_zx() {
+        let transform = shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+        let point = Tuple::point(2.0, 3.0, 4.0);
+
+        let expected = Tuple::point(2.0, 3.0, 6.0);
+
+        assert_eq!(transform * point, expected)
+    }
+
+
+    #[test]
+    fn shearing_zy() {
+        let transform = shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+
+        let point = Tuple::point(2.0, 3.0, 4.0);
+
+        let expected = Tuple::point(2.0, 3.0, 7.0);
+
+        assert_eq!(transform * point, expected)
     }
 }

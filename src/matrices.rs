@@ -147,7 +147,6 @@ impl PartialEq for Matrix4 {
 impl std::ops::Mul for Matrix4 {
     type Output = Matrix4;
 
-    /*
     fn mul(self, rhs: Self) -> Self::Output {
         let mut result = Matrix4::new();
 
@@ -161,8 +160,8 @@ impl std::ops::Mul for Matrix4 {
 
         result
     }
-    */
 
+    /*
     fn mul(self, rhs: Self) -> Self::Output {
         let mut result = Matrix4::new();
 
@@ -178,6 +177,7 @@ impl std::ops::Mul for Matrix4 {
 
         result
     }
+     */
 }
 
 
