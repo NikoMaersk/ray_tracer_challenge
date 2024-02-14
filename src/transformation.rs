@@ -70,6 +70,99 @@ fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix4 {
 }
 
 
+pub struct TransformationBuilder<T> {
+    transformation: Matrix4,
+    x: T,
+}
+
+
+impl<T> TransformationBuilder<T> where T: Transform {
+    pub fn transform(self) -> T {
+        self.x.transform(&self.transformation)
+    }
+
+    pub fn translate(mut self, x: f32, y: f32, z: f32) -> Self {
+        self.transformation = translation(x, y, z) * self.transformation;
+        self
+    }
+
+    pub fn scale(mut self, x:f32, y: f32, z: f32) -> Self {
+        self.transformation = scaling(x, y, z) * self.transformation;
+        self
+    }
+
+    pub fn rotate_x(mut self, radian: f32) -> Self {
+        self.transformation = rotation_x(radian);
+        self
+    }
+
+    pub fn rotate_y(mut self, radian: f32) -> Self {
+        self.transformation = rotation_y(radian);
+        self
+    }
+
+    pub fn rotate_z(mut self, radian: f32) -> Self {
+        self.transformation = rotation_z(radian);
+        self
+    }
+
+    pub fn shear(mut self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Self {
+        self.transformation = shearing(xy, xz, yx, yz, zx, zy);
+        self
+    }
+}
+
+
+pub trait Transform {
+    fn transform(self, transformation: &Matrix4) -> Self;
+
+    fn translate(self, x: f32, y: f32, z: f32) -> TransformationBuilder<Self> where Self: Sized {
+        TransformationBuilder {
+            transformation: translation(x, y, z),
+            x: self,
+        }
+    }
+
+    fn scale(self, x: f32, y: f32, z: f32) -> TransformationBuilder<Self> where Self: Sized {
+        TransformationBuilder {
+            transformation: scaling(x, y, z),
+            x: self,
+        }
+    }
+
+    fn rotate_x(self, radian: f32) -> TransformationBuilder<Self> where Self: Sized {
+        TransformationBuilder {
+            transformation: rotation_x(radian),
+            x: self,
+        }
+    }
+
+    fn rotate_y(self, radian: f32) -> TransformationBuilder<Self> where Self: Sized {
+        TransformationBuilder {
+            transformation: rotation_y(radian),
+            x: self,
+        }
+    }
+
+    fn rotate_z(self, radian: f32) -> TransformationBuilder<Self> where Self: Sized {
+        TransformationBuilder {
+            transformation: rotation_z(radian),
+            x: self,
+        }
+    }
+
+    fn shear(self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> TransformationBuilder<Self>
+        where Self: Sized,
+    {
+        TransformationBuilder {
+            transformation: shearing(xy, xz, yx, yz, zx, zy),
+            x: self,
+        }
+    }
+}
+
+
+
 #[cfg(test)]
 mod tests {
     use crate::transformation::*;
@@ -283,5 +376,44 @@ mod tests {
         let expected = Tuple::point(2.0, 3.0, 7.0);
 
         assert_eq!(transform * point, expected)
+    }
+
+
+    #[test]
+    fn chaining_transformations() {
+        let point = Tuple::point(1.0, 0.0, 1.0);
+
+        let rotate_x = rotation_x(consts::PI / 2.0);
+        let scaling = scaling(5.0, 5.0, 5.0);
+        let translation = translation(10.0, 5.0, 7.0);
+
+        let p2 = rotate_x * point;
+        let p3 = scaling * p2;
+        let p4 = translation * p3;
+
+        assert_eq!(p4, Tuple::point(15.0, 0.0, 7.0))
+    }
+
+
+    #[test]
+    fn chained_reverse() {
+        let point = Tuple::point(1.0, 0.0, 1.0);
+
+        let rotate_x = rotation_x(consts::PI / 2.0);
+        let scaling = scaling(5.0, 5.0, 5.0);
+        let translation = translation(10.0, 5.0, 7.0);
+
+        let t = translation * scaling * rotate_x;
+
+        assert_eq!(t * point, Tuple::point(15.0, 0.0, 7.0))
+    }
+
+    #[test]
+    fn transform_builder() {
+        let point = Tuple::point(1.0, 0.0, 1.0);
+
+        let actual = point.rotate_x(consts::PI / 2.0).scale(5.0, 5.0, 5.0).translate(10.0, 5.0, 7.0).transform();
+
+        assert_eq!(actual, Tuple::point(15.0, 0.0, 7.0))
     }
 }

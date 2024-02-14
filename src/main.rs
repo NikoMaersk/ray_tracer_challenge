@@ -1,24 +1,19 @@
 use ray_tracer_challenge::*;
 
 fn main() {
-    let matrix = Matrix4 {
-        matrix: [
-            [3.0, -9.0, 7.0, 3.0],
-            [3.0, -8.0, 2.0, -9.0],
-            [-4.0, 4.0, 4.0, 1.0],
-            [-6.0, 5.0, -1.0, 1.0],
-        ]};
-
-    let identity = Matrix4::identity_matrix();
-
-    //println!("{:?}", &identity.inverse());
-
-    let inverse = matrix.inverse().unwrap();
-
-    let mul_inverse = matrix * inverse;
-    println!("{:?}", mul_inverse==identity);
 
 }
+
+
+fn clock_example() {
+    let canvas = Canvas::new(600, 600);
+
+    let p = Tuple::point(0.0, 0.0, 0.0);
+
+    canvas.export(r#"C:\tmp\clock.png"#).expect("Couldn't create image");
+}
+
+
 
 fn canon_example() {
     let mut canvas = Canvas::new(900, 550);

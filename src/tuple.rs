@@ -1,4 +1,6 @@
 use crate::comparison::ApproxEq;
+use crate::Matrix4;
+use crate::transformation::Transform;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Tuple {
@@ -63,6 +65,12 @@ impl Tuple {
 
     pub fn w(&self) -> f32 {
         self.w
+    }
+}
+
+impl Transform for Tuple {
+    fn transform(self, transformation: &Matrix4) -> Self {
+        *transformation * self
     }
 }
 

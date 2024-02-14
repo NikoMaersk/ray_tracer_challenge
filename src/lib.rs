@@ -8,6 +8,7 @@ pub use tuple::Tuple;
 pub use canvas::Canvas;
 pub use color::Color;
 pub use matrices::*;
+pub use transformation::*;
 
 pub mod comparison {
     pub mod epsilon;
