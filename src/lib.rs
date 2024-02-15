@@ -3,6 +3,7 @@ pub mod color;
 pub mod canvas;
 pub mod matrices;
 mod transformation;
+mod ray;
 
 pub use tuple::Tuple;
 pub use canvas::Canvas;
