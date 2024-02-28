@@ -4,6 +4,7 @@ pub mod canvas;
 pub mod matrices;
 mod transformation;
 mod ray;
+mod intersection;
 
 pub use tuple::Tuple;
 pub use canvas::Canvas;
