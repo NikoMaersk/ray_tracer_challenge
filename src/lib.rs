@@ -11,6 +11,10 @@ pub use color::Color;
 pub use matrices::*;
 pub use transformation::*;
 
+pub mod shapes {
+    pub mod sphere;
+}
+
 pub mod comparison {
     pub mod epsilon;
     pub mod approx_eq;
