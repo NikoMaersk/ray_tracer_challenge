@@ -14,6 +14,7 @@ pub use transformation::*;
 
 pub mod shapes {
     pub mod sphere;
+    pub mod shape_enum;
 }
 
 pub mod comparison {

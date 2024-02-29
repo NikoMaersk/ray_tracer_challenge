@@ -1,6 +1,8 @@
 use crate::intersection::Intersection;
 use crate::ray::Ray;
 use crate::Tuple;
+use crate::shapes::shape_enum::Shape;
+
 
 #[derive(Copy, Clone, Debug)]
 pub struct Sphere {
@@ -24,8 +26,8 @@ impl Sphere {
         if discriminant < 0.0 {
             return vec![];
         } else {
-            let t1 = Intersection::new((-b - discriminant.sqrt()) / (2.0 * a));
-            let t2 = Intersection::new((-b + discriminant.sqrt()) / (2.0 * a));
+            let t1 = Intersection::new((-b - discriminant.sqrt()) / (2.0 * a), &Shape::Sphere(*self));
+            let t2 = Intersection::new((-b + discriminant.sqrt()) / (2.0 * a), &Shape::Sphere(*self));
 
             vec![t1, t2]
         }

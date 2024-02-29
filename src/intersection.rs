@@ -1,13 +1,13 @@
+use crate::shapes::shape_enum::Shape;
 
-#[derive(Copy, Clone, Debug)]
-pub struct Intersection {
+#[derive(Debug)]
+pub struct Intersection<'a> {
     pub t: f32,
+    pub object: &'a Shape,
 }
 
-impl Intersection {
-    pub fn new(t: f32) -> Self {
-        Intersection {
-            t
-        }
+impl<'a> Intersection<'a> {
+    pub fn new(t: f32, obj: &'a Shape) -> Self {
+        Intersection { t, object: obj }
     }
 }
