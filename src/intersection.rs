@@ -1,7 +1,7 @@
 use std::ops::Index;
 use crate::shapes::shape_enum::Shape;
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Intersection<'a> {
     pub t: f32,
     pub object: Shape<'a>,
@@ -10,6 +10,13 @@ pub struct Intersection<'a> {
 impl<'a> Intersection<'a> {
     pub fn new(t: f32, obj: Shape<'a>) -> Self {
         Intersection { t, object: obj }
+    }
+}
+
+
+impl<'a> PartialEq for Intersection<'a> {
+    fn eq(&self, other: &Self) -> bool {
+        self.t == other.t
     }
 }
 
@@ -25,7 +32,9 @@ impl<'a> Intersections<'a> {
         }
     }
 
-    pub fn new_from_vec(vec: Vec<Intersection<'a>>) -> Self {
+    pub fn new_from_vec(mut vec: Vec<Intersection<'a>>) -> Self {
+        vec.sort_unstable_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
+
         Intersections { intersections: vec }
     }
 
@@ -40,6 +49,10 @@ impl<'a> Intersections<'a> {
     pub fn push(&mut self, i: Intersection<'a>) {
         self.intersections.push(i)
     }
+
+    pub fn hit(&self) -> Option<&Intersection<'a>> {
+        self.intersections.iter().find(|i| i.t >= 0.0)
+    }
 }
 
 impl<'a> Index<usize> for Intersections<'a> {
@@ -47,13 +60,6 @@ impl<'a> Index<usize> for Intersections<'a> {
 
     fn index(&self, index: usize) -> &Self::Output {
         &self.intersections[index]
-    }
-}
-
-impl<'a> FromIterator<Intersection<'a>> for Intersections<'a> {
-    fn from_iter<I: IntoIterator<Item = Intersection<'a>>>(iter: I) -> Self {
-        let intersections = iter.into_iter().collect();
-        Intersections { intersections }
     }
 }
 
@@ -105,6 +111,49 @@ mod tests {
 
         let xs = Intersections::new_from_vec(vec![i1, i2]);
 
-        assert_eq!(i1, xs.hit());
+        assert_eq!(i1, *xs.hit().unwrap());
+    }
+
+    #[test]
+    fn hit_when_some_intersections_have_negative_t() {
+        let s = Sphere::new();
+        let shape = Shape::Sphere(&s);
+
+        let i1 = Intersection::new(-1.0, shape);
+        let i2 = Intersection::new(1.0, shape);
+
+        let xs = Intersections::new_from_vec(vec![i1, i2]);
+
+        assert_eq!(i2, *xs.hit().unwrap());
+    }
+
+
+    #[test]
+    fn hit_when_all_intersections_have_negative_t() {
+        let s = Sphere::new();
+        let shape = Shape::Sphere(&s);
+
+        let i1 = Intersection::new(-2.0, shape);
+        let i2 = Intersection::new(-1.0, shape);
+
+        let xs = Intersections::new_from_vec(vec![i1, i2]);
+
+        assert_eq!(None, xs.hit());
+    }
+
+
+    #[test]
+    fn hit_is_always_lowest() {
+        let s = Sphere::new();
+        let shape = Shape::Sphere(&s);
+
+        let i1 = Intersection::new(5.0, shape);
+        let i2 = Intersection::new(7.0, shape);
+        let i3 = Intersection::new(-3.0, shape);
+        let i4 = Intersection::new(2.0, shape);
+
+        let xs = Intersections::new_from_vec(vec![i1, i2, i3, i4]);
+
+        assert_eq!(i4, *xs.hit().unwrap());
     }
 }
