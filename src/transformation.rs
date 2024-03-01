@@ -1,6 +1,6 @@
 use crate::Matrix4;
 
-fn translation(x: f32, y: f32, z: f32) -> Matrix4 {
+pub fn translation(x: f32, y: f32, z: f32) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
     result.matrix[0][3] = x;
     result.matrix[1][3] = y;
@@ -10,7 +10,7 @@ fn translation(x: f32, y: f32, z: f32) -> Matrix4 {
 }
 
 
-fn scaling(x: f32, y: f32, z: f32) -> Matrix4 {
+pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
     result.matrix[0][0] = x;
     result.matrix[1][1] = y;
@@ -20,7 +20,7 @@ fn scaling(x: f32, y: f32, z: f32) -> Matrix4 {
 }
 
 
-fn rotation_x(radians: f32) -> Matrix4 {
+pub fn rotation_x(radians: f32) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
 
     result.matrix[1][1] = f32::cos(radians);
@@ -32,7 +32,7 @@ fn rotation_x(radians: f32) -> Matrix4 {
 }
 
 
-fn rotation_y(radian: f32) -> Matrix4 {
+pub fn rotation_y(radian: f32) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
 
     result.matrix[0][0] = f32::cos(radian);
@@ -44,7 +44,7 @@ fn rotation_y(radian: f32) -> Matrix4 {
 }
 
 
-fn rotation_z(radian: f32) -> Matrix4 {
+pub fn rotation_z(radian: f32) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
 
     result.matrix[0][0] = f32::cos(radian);
@@ -56,7 +56,7 @@ fn rotation_z(radian: f32) -> Matrix4 {
 }
 
 
-fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix4 {
+pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
 
     result.matrix[0][1] = xy;

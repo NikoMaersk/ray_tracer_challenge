@@ -47,7 +47,12 @@ impl<'a> Intersections<'a> {
     }
 
     pub fn push(&mut self, i: Intersection<'a>) {
-        self.intersections.push(i)
+        self.intersections.push(i);
+        self.sort()
+    }
+
+    pub fn sort(&mut self) {
+        self.intersections.sort_unstable_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
     }
 
     pub fn hit(&self) -> Option<&Intersection<'a>> {

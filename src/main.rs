@@ -5,16 +5,6 @@ fn main() {
 }
 
 
-fn clock_example() {
-    let canvas = Canvas::new(600, 600);
-
-    let p = Tuple::point(0.0, 0.0, 0.0);
-
-    canvas.export(r#"C:\tmp\clock.png"#).expect("Couldn't create image");
-}
-
-
-
 fn canon_example() {
     let mut canvas = Canvas::new(900, 550);
     let mut projectile = Tuple::point(10.0, 1.0, 0.0);
