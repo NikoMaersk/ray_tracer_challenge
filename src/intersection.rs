@@ -3,12 +3,12 @@ use crate::shapes::shape_enum::Shape;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Intersection<'a> {
-    pub t: f32,
+    pub t: f64,
     pub object: Shape<'a>,
 }
 
 impl<'a> Intersection<'a> {
-    pub fn new(t: f32, obj: Shape<'a>) -> Self {
+    pub fn new(t: f64, obj: Shape<'a>) -> Self {
         Intersection { t, object: obj }
     }
 }

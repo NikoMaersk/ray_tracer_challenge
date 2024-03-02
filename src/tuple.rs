@@ -4,18 +4,18 @@ use crate::transformation::Transform;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Tuple {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-    pub w: f32
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub w: f64
 }
 
 impl Tuple {
-    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
+    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
         Tuple { x, y, z, w }
     }
 
-    pub fn point(x: f32, y: f32, z: f32) -> Self {
+    pub fn point(x: f64, y: f64, z: f64) -> Self {
         Tuple {
             x,
             y,
@@ -24,7 +24,7 @@ impl Tuple {
         }
     }
 
-    pub fn vector(x: f32, y: f32, z: f32) -> Self {
+    pub fn vector(x: f64, y: f64, z: f64) -> Self {
         Tuple {
             x,
             y,
@@ -33,8 +33,8 @@ impl Tuple {
         }
     }
 
-    pub fn magnitude(&self) -> f32 {
-        f32::sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
+    pub fn magnitude(&self) -> f64 {
+        f64::sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
     }
 
     pub fn normalize(&self) -> Tuple {
@@ -47,23 +47,23 @@ impl Tuple {
         }
     }
 
-    pub fn dot(&self, other: Self) -> f32 {
+    pub fn dot(&self, other: Self) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
-    pub fn x(&self) -> f32 {
+    pub fn x(&self) -> f64 {
         self.x
     }
 
-    pub fn y(&self) -> f32 {
+    pub fn y(&self) -> f64 {
         self.y
     }
 
-    pub fn z(&self) -> f32 {
+    pub fn z(&self) -> f64 {
         self.z
     }
 
-    pub fn w(&self) -> f32 {
+    pub fn w(&self) -> f64 {
         self.w
     }
 }
@@ -121,10 +121,10 @@ impl std::ops::Neg for Tuple {
     }
 }
 
-impl std::ops::Mul<f32> for Tuple {
+impl std::ops::Mul<f64> for Tuple {
     type Output = Self;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         Tuple {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -134,7 +134,7 @@ impl std::ops::Mul<f32> for Tuple {
     }
 }
 
-impl std::ops::Mul<Tuple> for f32 {
+impl std::ops::Mul<Tuple> for f64 {
     type Output = Tuple;
 
     fn mul(self, rhs: Tuple) -> Self::Output {
@@ -157,10 +157,10 @@ impl std::ops::Mul for Tuple {
 }
 
 
-impl std::ops::Div<f32> for Tuple {
+impl std::ops::Div<f64> for Tuple {
     type Output = Self;
 
-    fn div(self, rhs: f32) -> Self::Output {
+    fn div(self, rhs: f64) -> Self::Output {
         Tuple {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -275,7 +275,7 @@ mod tests {
     #[test]
     fn multiply_with_scalar() {
         let vector = Tuple::new(1.0, -2.0, 3.0, -4.0);
-        let scalar: f32 = 3.5;
+        let scalar: f64 = 3.5;
 
         let expected = Tuple::new(3.5, -7.0, 10.5, -14.0);
         let actual = vector * scalar;
@@ -286,7 +286,7 @@ mod tests {
     #[test]
     fn multiply_with_fraction() {
         let vector = Tuple::new(1.0, -2.0, 3.0, -4.0);
-        let scalar: f32 = 0.5;
+        let scalar: f64 = 0.5;
 
         let expected = Tuple::new(0.5, -1.0, 1.5, -2.0);
         let actual = vector * scalar;
@@ -297,7 +297,7 @@ mod tests {
     #[test]
     fn divide_with_scalar() {
         let vector = Tuple::new(1.0, -2.0, 3.0, -4.0);
-        let scalar: f32 = 2.0;
+        let scalar: f64 = 2.0;
 
         let expected = Tuple::new(0.5, -1.0, 1.5, -2.0);
         let actual = vector / scalar;
@@ -309,7 +309,7 @@ mod tests {
     fn compute_magnitude_y() {
         let vector = Tuple::vector(0.0, 1.0, 0.0);
 
-        let expected: f32 = 1.0;
+        let expected: f64 = 1.0;
         let actual = vector.magnitude();
 
         assert_eq!(actual, expected)
@@ -319,7 +319,7 @@ mod tests {
     fn compute_magnitude_x() {
         let vector = Tuple::vector(1.0, 0.0, 0.0);
 
-        let expected: f32 = 1.0;
+        let expected: f64 = 1.0;
         let actual = vector.magnitude();
 
         assert_eq!(actual, expected)
@@ -329,7 +329,7 @@ mod tests {
     fn compute_magnitude_z() {
         let vector = Tuple::vector(0.0, 0.0, 1.0);
 
-        let expected: f32 = 1.0;
+        let expected: f64 = 1.0;
         let actual = vector.magnitude();
 
         assert_eq!(actual, expected)
@@ -339,7 +339,7 @@ mod tests {
     fn compute_magnitude_positive() {
         let vector = Tuple::vector(1.0, 2.0, 3.0);
 
-        let expected: f32 = f32::sqrt(14.0);
+        let expected: f64 = f64::sqrt(14.0);
         let actual = vector.magnitude();
 
         assert_eq!(actual, expected)
@@ -349,7 +349,7 @@ mod tests {
     fn compute_magnitude_negative() {
         let vector = Tuple::vector(-1.0, -2.0, -3.0);
 
-        let expected: f32 = f32::sqrt(14.0);
+        let expected: f64 = f64::sqrt(14.0);
         let actual = vector.magnitude();
 
         assert_eq!(actual, expected)
@@ -369,7 +369,7 @@ mod tests {
     fn normalize() {
         let vector = Tuple::vector(1.0, 2.0, 3.0);
 
-        let expected = Tuple::vector(1.0 / f32::sqrt(14.0), 2.0 / f32::sqrt(14.0), 3.0 / f32::sqrt(14.0));
+        let expected = Tuple::vector(1.0 / f64::sqrt(14.0), 2.0 / f64::sqrt(14.0), 3.0 / f64::sqrt(14.0));
         let actual = vector.normalize();
 
         assert_eq!(actual, expected)
@@ -389,7 +389,7 @@ mod tests {
         let v1 = Tuple::vector(1.0, 2.0, 3.0);
         let v2 = Tuple::vector(2.0, 3.0, 4.0);
 
-        let expected: f32 = 20.0;
+        let expected: f64 = 20.0;
 
         assert_eq!(v1.dot(v2), expected)
     }

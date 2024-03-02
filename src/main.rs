@@ -11,7 +11,7 @@ fn cast_ray_at_sphere() {
     let canvas_pixels = 200;
     let wall_size = 7.0;
     let wall_z = 10.0;
-    let pixel_size = wall_size / (canvas_pixels as f32);
+    let pixel_size = wall_size / (canvas_pixels as f64);
     let half = wall_size / 2.0;
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
@@ -20,10 +20,10 @@ fn cast_ray_at_sphere() {
     let ray_origin = Tuple::point(0.0, 0.0, -5.0);
 
     for y in 0..canvas_pixels {
-        let world_y = half - pixel_size * (y as f32);
+        let world_y = half - pixel_size * (y as f64);
 
         for x in 0..canvas_pixels {
-            let world_x = half + pixel_size * (x as f32);
+            let world_x = half + pixel_size * (x as f64);
 
             let position = Tuple::point(world_x, world_y, wall_z);
             let ray_direction = (position - ray_origin).normalize();
@@ -53,7 +53,7 @@ fn canon_example() {
         println!("{:.2} meter", projectile.x());
 
         let x_pixel = projectile.x().round() as usize;
-        let y_pixel = (canvas.height as f32 - projectile.y()).round() as usize;
+        let y_pixel = (canvas.height as f64 - projectile.y()).round() as usize;
         canvas.write_pixel(x_pixel, y_pixel, Color::red());
 
         projectile = projectile + velocity;

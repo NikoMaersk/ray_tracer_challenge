@@ -1,6 +1,6 @@
 use crate::Matrix4;
 
-pub fn translation(x: f32, y: f32, z: f32) -> Matrix4 {
+pub fn translation(x: f64, y: f64, z: f64) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
     result.matrix[0][3] = x;
     result.matrix[1][3] = y;
@@ -10,7 +10,7 @@ pub fn translation(x: f32, y: f32, z: f32) -> Matrix4 {
 }
 
 
-pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4 {
+pub fn scaling(x: f64, y: f64, z: f64) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
     result.matrix[0][0] = x;
     result.matrix[1][1] = y;
@@ -20,43 +20,43 @@ pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4 {
 }
 
 
-pub fn rotation_x(radians: f32) -> Matrix4 {
+pub fn rotation_x(radians: f64) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
 
-    result.matrix[1][1] = f32::cos(radians);
-    result.matrix[1][2] = -f32::sin(radians);
-    result.matrix[2][1] = f32::sin(radians);
-    result.matrix[2][2] = f32::cos(radians);
+    result.matrix[1][1] = f64::cos(radians);
+    result.matrix[1][2] = -f64::sin(radians);
+    result.matrix[2][1] = f64::sin(radians);
+    result.matrix[2][2] = f64::cos(radians);
 
     result
 }
 
 
-pub fn rotation_y(radian: f32) -> Matrix4 {
+pub fn rotation_y(radian: f64) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
 
-    result.matrix[0][0] = f32::cos(radian);
-    result.matrix[2][0] = -f32::sin(radian);
-    result.matrix[0][2] = f32::sin(radian);
-    result.matrix[2][2] = f32::cos(radian);
+    result.matrix[0][0] = f64::cos(radian);
+    result.matrix[2][0] = -f64::sin(radian);
+    result.matrix[0][2] = f64::sin(radian);
+    result.matrix[2][2] = f64::cos(radian);
 
     result
 }
 
 
-pub fn rotation_z(radian: f32) -> Matrix4 {
+pub fn rotation_z(radian: f64) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
 
-    result.matrix[0][0] = f32::cos(radian);
-    result.matrix[1][0] = f32::sin(radian);
-    result.matrix[0][1] = -f32::sin(radian);
-    result.matrix[1][1] = f32::cos(radian);
+    result.matrix[0][0] = f64::cos(radian);
+    result.matrix[1][0] = f64::sin(radian);
+    result.matrix[0][1] = -f64::sin(radian);
+    result.matrix[1][1] = f64::cos(radian);
 
     result
 }
 
 
-pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix4 {
+pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix4 {
     let mut result = Matrix4::identity_matrix();
 
     result.matrix[0][1] = xy;
@@ -81,32 +81,32 @@ impl<T> TransformationBuilder<T> where T: Transform {
         self.x.transform(&self.transformation)
     }
 
-    pub fn translate(mut self, x: f32, y: f32, z: f32) -> Self {
+    pub fn translate(mut self, x: f64, y: f64, z: f64) -> Self {
         self.transformation = translation(x, y, z) * self.transformation;
         self
     }
 
-    pub fn scale(mut self, x:f32, y: f32, z: f32) -> Self {
+    pub fn scale(mut self, x:f64, y: f64, z: f64) -> Self {
         self.transformation = scaling(x, y, z) * self.transformation;
         self
     }
 
-    pub fn rotate_x(mut self, radian: f32) -> Self {
+    pub fn rotate_x(mut self, radian: f64) -> Self {
         self.transformation = rotation_x(radian);
         self
     }
 
-    pub fn rotate_y(mut self, radian: f32) -> Self {
+    pub fn rotate_y(mut self, radian: f64) -> Self {
         self.transformation = rotation_y(radian);
         self
     }
 
-    pub fn rotate_z(mut self, radian: f32) -> Self {
+    pub fn rotate_z(mut self, radian: f64) -> Self {
         self.transformation = rotation_z(radian);
         self
     }
 
-    pub fn shear(mut self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Self {
+    pub fn shear(mut self, xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
         self.transformation = shearing(xy, xz, yx, yz, zx, zy);
         self
     }
@@ -116,42 +116,42 @@ impl<T> TransformationBuilder<T> where T: Transform {
 pub trait Transform {
     fn transform(self, transformation: &Matrix4) -> Self;
 
-    fn translate(self, x: f32, y: f32, z: f32) -> TransformationBuilder<Self> where Self: Sized {
+    fn translate(self, x: f64, y: f64, z: f64) -> TransformationBuilder<Self> where Self: Sized {
         TransformationBuilder {
             transformation: translation(x, y, z),
             x: self,
         }
     }
 
-    fn scale(self, x: f32, y: f32, z: f32) -> TransformationBuilder<Self> where Self: Sized {
+    fn scale(self, x: f64, y: f64, z: f64) -> TransformationBuilder<Self> where Self: Sized {
         TransformationBuilder {
             transformation: scaling(x, y, z),
             x: self,
         }
     }
 
-    fn rotate_x(self, radian: f32) -> TransformationBuilder<Self> where Self: Sized {
+    fn rotate_x(self, radian: f64) -> TransformationBuilder<Self> where Self: Sized {
         TransformationBuilder {
             transformation: rotation_x(radian),
             x: self,
         }
     }
 
-    fn rotate_y(self, radian: f32) -> TransformationBuilder<Self> where Self: Sized {
+    fn rotate_y(self, radian: f64) -> TransformationBuilder<Self> where Self: Sized {
         TransformationBuilder {
             transformation: rotation_y(radian),
             x: self,
         }
     }
 
-    fn rotate_z(self, radian: f32) -> TransformationBuilder<Self> where Self: Sized {
+    fn rotate_z(self, radian: f64) -> TransformationBuilder<Self> where Self: Sized {
         TransformationBuilder {
             transformation: rotation_z(radian),
             x: self,
         }
     }
 
-    fn shear(self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> TransformationBuilder<Self>
+    fn shear(self, xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> TransformationBuilder<Self>
         where Self: Sized,
     {
         TransformationBuilder {
@@ -168,7 +168,7 @@ mod tests {
     use crate::transformation::*;
     use crate::Tuple;
 
-    use std::f32::consts;
+    use std::f64::consts;
 
     #[test]
     fn mul_by_translation() {
@@ -257,7 +257,7 @@ mod tests {
         let full_quarter = rotation_x(consts::PI / 2.0);
 
 
-        let expected_half = Tuple::point(0.0, f32::sqrt(2.0)/ 2.0, f32::sqrt(2.0)/2.0);
+        let expected_half = Tuple::point(0.0, f64::sqrt(2.0)/ 2.0, f64::sqrt(2.0)/2.0);
         assert_eq!(half_quarter * point, expected_half);
 
         let expected_full = Tuple::point(0.0, 0.0, 1.0);
@@ -271,7 +271,7 @@ mod tests {
         let half_quarter = rotation_x(consts::PI / 4.0);
         let inverse = half_quarter.inverse().unwrap();
 
-        let expected = Tuple::point(0.0, f32::sqrt(2.0) / 2.0, -f32::sqrt(2.0) / 2.0);
+        let expected = Tuple::point(0.0, f64::sqrt(2.0) / 2.0, -f64::sqrt(2.0) / 2.0);
 
         assert_eq!(inverse * point, expected)
     }
@@ -284,7 +284,7 @@ mod tests {
         let half_quarter = rotation_y(consts::PI / 4.0);
         let full_quarter = rotation_y(consts::PI / 2.0);
 
-        let expected_half = Tuple::point(f32::sqrt(2.0) / 2.0, 0.0, f32::sqrt(2.0) / 2.0);
+        let expected_half = Tuple::point(f64::sqrt(2.0) / 2.0, 0.0, f64::sqrt(2.0) / 2.0);
         assert_eq!(half_quarter * point, expected_half);
 
         let expected_full = Tuple::point(1.0, 0.0, 0.0);
@@ -299,7 +299,7 @@ mod tests {
         let half_quarter = rotation_z(consts::PI / 4.0);
         let full_quarter = rotation_z(consts::PI / 2.0);
 
-        let expected_half = Tuple::point(-f32::sqrt(2.0) / 2.0, f32::sqrt(2.0) / 2.0, 0.0);
+        let expected_half = Tuple::point(-f64::sqrt(2.0) / 2.0, f64::sqrt(2.0) / 2.0, 0.0);
         assert_eq!(half_quarter * point, expected_half);
 
         let expected_full = Tuple::point(-1.0, 0.0, 0.0);

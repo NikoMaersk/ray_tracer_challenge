@@ -4,7 +4,7 @@ use crate::Tuple;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix4 {
-    pub matrix: [[f32; 4]; 4],
+    pub matrix: [[f64; 4]; 4],
 }
 
 impl Matrix4 {
@@ -73,12 +73,12 @@ impl Matrix4 {
     }
 
 
-    pub fn minor(&self, row: usize, col: usize) -> f32 {
+    pub fn minor(&self, row: usize, col: usize) -> f64 {
         self.submatrix(row, col).determinant()
     }
 
 
-    pub fn cofactor(&self, row: usize, col: usize) -> f32 {
+    pub fn cofactor(&self, row: usize, col: usize) -> f64 {
         let minor = self.minor(row, col);
         if (row + col) % 2 == 0 {
             minor
@@ -88,7 +88,7 @@ impl Matrix4 {
     }
 
 
-    pub fn determinant(&self) -> f32 {
+    pub fn determinant(&self) -> f64 {
         let mut result = 0.0;
         for i in 0..4 {
             result += self.matrix[0][i] * self.cofactor(0, i)
@@ -234,7 +234,7 @@ impl std::ops::Mul<Tuple> for Matrix4 {
 
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix3 {
-    matrix: [[f32; 3]; 3]
+    matrix: [[f64; 3]; 3]
 }
 
 impl Matrix3 {
@@ -268,12 +268,12 @@ impl Matrix3 {
     }
 
 
-    pub fn minor(&self, row: usize, col: usize) -> f32 {
+    pub fn minor(&self, row: usize, col: usize) -> f64 {
         self.submatrix(row, col).determinant()
     }
 
 
-    pub fn cofactor(&self, row: usize, col: usize) -> f32 {
+    pub fn cofactor(&self, row: usize, col: usize) -> f64 {
         let minor = self.minor(row, col);
         if (row + col) % 2 == 0 {
             minor
@@ -283,7 +283,7 @@ impl Matrix3 {
     }
 
 
-    pub fn determinant(&self) -> f32 {
+    pub fn determinant(&self) -> f64 {
         let mut result = 0.0;
         for i in 0..3 {
             result += self.matrix[0][i] * self.cofactor(0, i);
@@ -296,7 +296,7 @@ impl Matrix3 {
 
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix2 {
-    matrix: [[f32; 2]; 2]
+    matrix: [[f64; 2]; 2]
 }
 
 impl Matrix2 {
@@ -306,7 +306,7 @@ impl Matrix2 {
         }
     }
 
-    pub fn determinant(&self) -> f32 {
+    pub fn determinant(&self) -> f64 {
         self.matrix[0][0] * self.matrix[1][1] - self.matrix[0][1] * self.matrix[1][0]
     }
 }

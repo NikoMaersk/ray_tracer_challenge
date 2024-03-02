@@ -89,7 +89,7 @@ impl Canvas {
     }
 }
 
-pub fn convert_f32_to_u8(component: f32) -> u8 {
+pub fn convert_f32_to_u8(component: f64) -> u8 {
     let component = if component < 0.0 {
         0.0
     } else if component > 1.0 {

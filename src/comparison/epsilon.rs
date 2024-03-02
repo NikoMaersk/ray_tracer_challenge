@@ -1,2 +1,2 @@
-pub const EPSILON: f32 = 1.0e-7_f32;
-pub const LOW_EPSILON: f32 = 1.0e-3_f32;
+pub const EPSILON: f64 = 1.0e-7_f64;
+pub const LOW_EPSILON: f64 = 1.0e-3_f64;

@@ -2,13 +2,13 @@ use crate::comparison::ApproxEq;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Color {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
+    pub r: f64,
+    pub g: f64,
+    pub b: f64,
 }
 
 impl Color {
-    pub fn new(r: f32, g: f32, b: f32) -> Self {
+    pub fn new(r: f64, g: f64, b: f64) -> Self {
         Color { r, g, b }
     }
 
@@ -67,10 +67,10 @@ impl PartialEq for Color {
     }
 }
 
-impl std::ops::Mul<f32> for Color {
+impl std::ops::Mul<f64> for Color {
     type Output = Self;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         Self {
             r: self.r * rhs,
             g: self.g * rhs,
@@ -79,7 +79,7 @@ impl std::ops::Mul<f32> for Color {
     }
 }
 
-impl std::ops::Mul<Color> for f32 {
+impl std::ops::Mul<Color> for f64 {
     type Output = Color;
 
     fn mul(self, rhs: Color) -> Self::Output {
@@ -125,7 +125,7 @@ mod tests {
     #[test]
     fn multiply_scalar() {
         let c1 = Color { r: 0.2, g: 0.3, b: 0.4 };
-        let scalar: f32 = 2.0;
+        let scalar: f64 = 2.0;
         let expected = Color { r: 0.4, g: 0.6, b: 0.8 };
         assert_eq!(c1 * scalar, expected)
     }
