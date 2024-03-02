@@ -2,19 +2,23 @@ pub mod tuple;
 pub mod color;
 pub mod canvas;
 pub mod matrices;
-mod transformation;
-mod ray;
-mod intersection;
+pub mod transformation;
+pub mod ray;
+pub mod intersection;
 
 pub use tuple::Tuple;
 pub use canvas::Canvas;
 pub use color::Color;
 pub use matrices::*;
 pub use transformation::*;
+pub use ray::*;
 
 pub mod shapes {
     pub mod sphere;
     pub mod shape_enum;
+
+    pub use sphere::Sphere;
+    pub use shape_enum::Shape;
 }
 
 pub mod comparison {

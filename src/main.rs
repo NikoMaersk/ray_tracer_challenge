@@ -1,7 +1,43 @@
 use ray_tracer_challenge::*;
+use ray_tracer_challenge::intersection::Intersections;
+use ray_tracer_challenge::shapes::Sphere;
 
 fn main() {
+    cast_ray_at_sphere();
+}
 
+
+fn cast_ray_at_sphere() {
+    let canvas_pixels = 200;
+    let wall_size = 7.0;
+    let wall_z = 10.0;
+    let pixel_size = wall_size / (canvas_pixels as f32);
+    let half = wall_size / 2.0;
+
+    let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
+    let red = Color::red();
+    let sphere = Sphere::new().with_transform(translation(2.25, 0.0, 0.0));
+    let ray_origin = Tuple::point(0.0, 0.0, -5.0);
+
+    for y in 0..canvas_pixels {
+        let world_y = half - pixel_size * (y as f32);
+
+        for x in 0..canvas_pixels {
+            let world_x = half + pixel_size * (x as f32);
+
+            let position = Tuple::point(world_x, world_y, wall_z);
+            let ray_direction = (position - ray_origin).normalize();
+            let ray = Ray::new(ray_origin, ray_direction);
+
+            let xs = Intersections::new_from_vec(sphere.intersect(ray));
+
+            if xs.hit().is_some() {
+                canvas.write_pixel(x, y, red);
+            }
+        }
+    }
+
+    canvas.export(r#"C:\tmp\output.png"#).expect("Couldn't create image")
 }
 
 
