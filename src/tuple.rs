@@ -76,9 +76,9 @@ impl Transform for Tuple {
 
 impl PartialEq for Tuple {
     fn eq(&self, compare_to: &Self) -> bool {
-        self.x.approx_eq(compare_to.x)
-            && self.y.approx_eq(compare_to.y)
-            && self.z.approx_eq(compare_to.z)
+        self.x.approx_eq_low_precision(compare_to.x)
+            && self.y.approx_eq_low_precision(compare_to.y)
+            && self.z.approx_eq_low_precision(compare_to.z)
     }
 }
 
@@ -375,14 +375,14 @@ mod tests {
         assert_eq!(actual, expected)
     }
 
-    /*
+
     #[test]
     fn magnitude_of_normalized_vector() {
         let vector = Tuple::vector(1.0, 2.0, 3.0);
 
         assert_eq!(vector.normalize().magnitude(), 1.0)
     }
-    */
+
 
     #[test]
     fn dot() {

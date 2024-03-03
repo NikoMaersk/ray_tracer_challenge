@@ -16,17 +16,20 @@ impl Ray {
         self.origin + self.direction * t
     }
 
-    pub fn transformation(&self, transform: &Matrix4) -> Self {
+    fn transformation(&self, transform: &Matrix4) -> Self {
         Ray {
-            origin: self.origin * *transform,
-            direction: self.direction * *transform
+            origin: *transform * self.origin,
+            direction: *transform * self.direction
         }
     }
 }
 
 impl Transform for Ray {
     fn transform(self, transformation: &Matrix4) -> Self {
-        self.transformation(transformation)
+        Ray {
+            origin: *transformation * self.origin,
+            direction: *transformation * self.direction
+        }
     }
 }
 

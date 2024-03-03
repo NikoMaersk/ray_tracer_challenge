@@ -160,24 +160,6 @@ impl std::ops::Mul for Matrix4 {
 
         result
     }
-
-    /*
-    fn mul(self, rhs: Self) -> Self::Output {
-        let mut result = Matrix4::new();
-
-        for i in 0..4 {
-            for j in 0..4 {
-                result.matrix[i][j] =
-                    self.matrix[i][0] * rhs.matrix[0][j]
-                        + self.matrix[i][1] * rhs.matrix[1][j]
-                        + self.matrix[i][2] * rhs.matrix[2][j]
-                        + self.matrix[i][3] * rhs.matrix[3][j];
-            }
-        }
-
-        result
-    }
-     */
 }
 
 

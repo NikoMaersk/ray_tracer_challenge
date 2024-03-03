@@ -92,22 +92,22 @@ impl<T> TransformationBuilder<T> where T: Transform {
     }
 
     pub fn rotate_x(mut self, radian: f64) -> Self {
-        self.transformation = rotation_x(radian);
+        self.transformation = rotation_x(radian) * self.transformation;
         self
     }
 
     pub fn rotate_y(mut self, radian: f64) -> Self {
-        self.transformation = rotation_y(radian);
+        self.transformation = rotation_y(radian) * self.transformation;
         self
     }
 
     pub fn rotate_z(mut self, radian: f64) -> Self {
-        self.transformation = rotation_z(radian);
+        self.transformation = rotation_z(radian) * self.transformation;
         self
     }
 
     pub fn shear(mut self, xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
-        self.transformation = shearing(xy, xz, yx, yz, zx, zy);
+        self.transformation = shearing(xy, xz, yx, yz, zx, zy) * self.transformation;
         self
     }
 }

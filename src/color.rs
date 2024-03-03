@@ -61,9 +61,9 @@ impl std::ops::Sub for Color {
 
 impl PartialEq for Color {
     fn eq(&self, other: &Self) -> bool {
-        self.r.approx_eq_low_precision(other.r)
-            && self.g.approx_eq_low_precision(other.g)
-            && self.b.approx_eq_low_precision(other.b)
+        self.r.approx_eq(other.r)
+            && self.g.approx_eq(other.g)
+            && self.b.approx_eq(other.b)
     }
 }
 

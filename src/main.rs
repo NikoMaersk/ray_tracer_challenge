@@ -1,9 +1,16 @@
+use std::time::Instant;
 use ray_tracer_challenge::*;
 use ray_tracer_challenge::intersection::Intersections;
 use ray_tracer_challenge::shapes::Sphere;
 
 fn main() {
+    let start_time = Instant::now();
+
     cast_ray_at_sphere();
+
+    let elapsed_time = start_time.elapsed();
+
+    println!("Elapsed time: {:?}", elapsed_time);
 }
 
 
@@ -15,7 +22,7 @@ fn cast_ray_at_sphere() {
     let half = wall_size / 2.0;
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
-    let red = Color::green();
+    let red = Color::red();
     let sphere = Sphere::new();
     let ray_origin = Tuple::point(0.0, 0.0, -5.0);
 
