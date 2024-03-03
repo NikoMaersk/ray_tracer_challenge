@@ -231,7 +231,7 @@ mod tests {
 
         let sqrt_two = f64::sqrt(2.0) / 2.0;
 
-        let n = s.normal_at(Tuple::point(0.0, sqrt_two, sqrt_two));
+        let n = s.normal_at(Tuple::point(0.0, sqrt_two, -sqrt_two));
 
         assert_eq!(Tuple::vector(0.0, 0.97014, -0.24254), n);
     }
