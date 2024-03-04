@@ -1,18 +1,21 @@
 use crate::intersection::Intersection;
 use crate::ray::Ray;
 use crate::{Matrix4, Transform, Tuple};
+use crate::materials::Material;
 use crate::shapes::shape_enum::Shape;
 
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Sphere {
     pub transform: Matrix4,
+    pub material: Material,
 }
 
 impl Sphere {
     pub fn new() -> Self {
         Sphere {
-            transform: Matrix4::identity_matrix()
+            transform: Matrix4::identity_matrix(),
+            material: Material::new()
         }
     }
 
@@ -61,9 +64,10 @@ impl Sphere {
 
 impl Transform for Sphere {
     fn transform(self, transformation: &Matrix4) -> Self {
-        let new_transformation = *transformation * self.transform;
+        let new_transform = *transformation * self.transform;
         Sphere {
-            transform: new_transformation
+            transform: new_transform,
+            material: self.material
         }
     }
 }
@@ -72,7 +76,7 @@ impl Transform for Sphere {
 mod tests {
     use crate::ray::Ray;
     use crate::shapes::sphere::Sphere;
-    use crate::{Matrix4, Tuple, scaling, translation, rotation_z};
+    use crate::{Matrix4, Tuple, scaling, translation, rotation_z, Transform, Material};
 
     #[test]
     fn ray_intersects_sphere_at_two_points() {
@@ -234,5 +238,38 @@ mod tests {
         let n = s.normal_at(Tuple::point(0.0, sqrt_two, -sqrt_two));
 
         assert_eq!(Tuple::vector(0.0, 0.97014, -0.24254), n);
+    }
+
+    #[test]
+    fn computing_the_normal_on_transformed_sphere_with_builder() {
+        let s = Sphere::new()
+            .rotate_z(std::f64::consts::PI/5.0)
+            .scale(1.0, 0.5, 1.0)
+            .transform();
+
+        let sqrt_two = f64::sqrt(2.0) / 2.0;
+
+        let n = s.normal_at(Tuple::point(0.0, sqrt_two, -sqrt_two));
+
+        assert_eq!(Tuple::vector(0.0, 0.97014, -0.24254), n);
+    }
+
+    #[test]
+    fn sphere_has_default_material() {
+        let s = Sphere::new();
+
+        assert_eq!(Material::new(), s.material)
+    }
+
+    #[test]
+    fn sphere_may_be_assigned_material() {
+        let mut s = Sphere::new();
+
+        let mut m = Material::new();
+        m.ambient = 1.0;
+
+        s.material = m;
+
+        assert_eq!(m, s.material)
     }
 }

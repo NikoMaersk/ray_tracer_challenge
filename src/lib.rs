@@ -5,6 +5,8 @@ pub mod matrices;
 pub mod transformation;
 pub mod ray;
 pub mod intersection;
+mod lights;
+mod materials;
 
 pub use tuple::Tuple;
 pub use canvas::Canvas;
@@ -12,6 +14,8 @@ pub use color::Color;
 pub use matrices::*;
 pub use transformation::*;
 pub use ray::*;
+pub use materials::Material;
+pub use lights::Light;
 
 pub mod shapes {
     pub mod sphere;

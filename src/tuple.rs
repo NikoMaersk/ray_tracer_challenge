@@ -66,6 +66,10 @@ impl Tuple {
     pub fn w(&self) -> f64 {
         self.w
     }
+
+    pub fn reflect(&self, normal: Tuple) -> Tuple {
+        *self - normal * 2.0 * self.dot(normal)
+    }
 }
 
 impl Transform for Tuple {
@@ -406,5 +410,31 @@ mod tests {
         let expected = Tuple::vector(1.0, -2.0, 1.0);
 
         assert_eq!(v2 * v1, expected)
+    }
+
+    #[test]
+    fn reflecting_a_vector_approaching_45_degrees() {
+        let v = Tuple::vector(1.0, -1.0, 0.0);
+        let n = Tuple::vector(0.0, 1.0, 0.0);
+
+        let r = v.reflect(n);
+
+        let expected = Tuple::vector(1.0, 1.0, 0.0);
+
+        assert_eq!(expected, r)
+    }
+
+    #[test]
+    fn reflecting_a_vector_of_a_slanted_surface() {
+        let v = Tuple::vector(0.0, -1.0, 0.0);
+
+        let sqrt_two = f64::sqrt(2.0) / 2.0;
+        let n = Tuple::vector(sqrt_two, sqrt_two, 0.0);
+
+        let r = v.reflect(n);
+
+        let expected = Tuple::vector(1.0, 0.0, 0.0);
+
+        assert_eq!(expected, r)
     }
 }

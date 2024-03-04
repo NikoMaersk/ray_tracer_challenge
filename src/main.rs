@@ -1,7 +1,7 @@
 use std::time::Instant;
 use ray_tracer_challenge::*;
 use ray_tracer_challenge::intersection::Intersections;
-use ray_tracer_challenge::shapes::Sphere;
+use ray_tracer_challenge::shapes::{Shape, Sphere};
 
 fn main() {
     let start_time = Instant::now();
@@ -22,9 +22,14 @@ fn cast_ray_at_sphere() {
     let half = wall_size / 2.0;
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
-    let red = Color::red();
-    let sphere = Sphere::new();
+    let mut sphere = Sphere::new().with_transform(scaling(1.0, 0.5, 1.0));
     let ray_origin = Tuple::point(0.0, 0.0, -5.0);
+
+    // Chapter 6 additions
+    sphere.material.color = Color::new(1.0, 1.0, 0.0);
+    let light_position = Tuple::point(-10.0, -10.0, -10.0);
+    let light_color = Color::white();
+    let light = Light::new(light_position, light_color);
 
     for y in 0..canvas_pixels {
         let world_y = half - pixel_size * (y as f64);
@@ -39,7 +44,19 @@ fn cast_ray_at_sphere() {
             let xs = Intersections::new_from_vec(sphere.intersect(ray));
 
             if xs.hit().is_some() {
-                canvas.write_pixel(x, y, red);
+                // Chapter 6 additions
+                let hit = xs.hit().unwrap();
+                let s = match hit.object {
+                    Shape::Sphere(sphere) => sphere
+                };
+
+                let point = ray.position(hit.t);
+                let normal = s.normal_at(point);
+                let eye = -ray.direction;
+
+                let color = s.material.lighting(light, point, eye, normal);
+
+                canvas.write_pixel(x, y, color);
             }
         }
     }
