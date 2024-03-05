@@ -7,6 +7,7 @@ pub mod ray;
 pub mod intersection;
 mod lights;
 mod materials;
+mod world;
 
 pub use tuple::Tuple;
 pub use canvas::Canvas;

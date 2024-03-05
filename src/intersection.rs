@@ -2,37 +2,37 @@ use std::ops::Index;
 use crate::shapes::shape_enum::Shape;
 
 #[derive(Copy, Clone, Debug)]
-pub struct Intersection<'a> {
+pub struct Intersection {
     pub t: f64,
-    pub object: Shape<'a>,
+    pub object: Shape,
 }
 
-impl<'a> Intersection<'a> {
-    pub fn new(t: f64, obj: Shape<'a>) -> Self {
+impl Intersection {
+    pub fn new(t: f64, obj: Shape) -> Self {
         Intersection { t, object: obj }
     }
 }
 
 
-impl<'a> PartialEq for Intersection<'a> {
+impl PartialEq for Intersection {
     fn eq(&self, other: &Self) -> bool {
         self.t == other.t
     }
 }
 
 #[derive(Debug)]
-pub struct Intersections<'a> {
-    intersections: Vec<Intersection<'a>>
+pub struct Intersections {
+    intersections: Vec<Intersection>
 }
 
-impl<'a> Intersections<'a> {
+impl Intersections {
     pub fn new() -> Self {
         Self {
-            intersections: Vec::<Intersection<'a>>::new(),
+            intersections: Vec::<Intersection>::new(),
         }
     }
 
-    pub fn new_from_vec(mut vec: Vec<Intersection<'a>>) -> Self {
+    pub fn new_from_vec(mut vec: Vec<Intersection>) -> Self {
         vec.sort_unstable_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
 
         Intersections { intersections: vec }
@@ -46,7 +46,7 @@ impl<'a> Intersections<'a> {
         self.intersections.is_empty()
     }
 
-    pub fn push(&mut self, i: Intersection<'a>) {
+    pub fn push(&mut self, i: Intersection) {
         self.intersections.push(i);
         self.sort()
     }
@@ -55,13 +55,13 @@ impl<'a> Intersections<'a> {
         self.intersections.sort_unstable_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
     }
 
-    pub fn hit(&self) -> Option<&Intersection<'a>> {
+    pub fn hit(&self) -> Option<&Intersection> {
         self.intersections.iter().find(|i| i.t >= 0.0)
     }
 }
 
-impl<'a> Index<usize> for Intersections<'a> {
-    type Output = Intersection<'a>;
+impl<'a> Index<usize> for Intersections {
+    type Output = Intersection;
 
     fn index(&self, index: usize) -> &Self::Output {
         &self.intersections[index]
@@ -79,20 +79,20 @@ mod tests {
     fn intersection_encapsulates_t_and_object() {
         let s = Sphere::new();
 
-        let i = Intersection::new(3.5, Shape::Sphere(&s));
+        let i = Intersection::new(3.5, Shape::Sphere(s));
 
         let expected_s = match i.object {
             Shape::Sphere(sphere) => sphere
         };
 
         assert_eq!(3.5, i.t);
-        assert_eq!(s, *expected_s);
+        assert_eq!(s, expected_s);
     }
 
     #[test]
     fn aggregating_intersections() {
         let s = Sphere::new();
-        let shape = Shape::Sphere(&s);
+        let shape = Shape::Sphere(s);
 
         let i1 = Intersection::new(1.0, shape);
         let i2 = Intersection::new(2.0, shape);
@@ -109,34 +109,34 @@ mod tests {
     #[test]
     fn hit_when_all_intersections_have_positive_t() {
         let s = Sphere::new();
-        let shape = Shape::Sphere(&s);
+        let shape = Shape::Sphere(s);
 
         let i1 = Intersection::new(1.0, shape);
         let i2 = Intersection::new(2.0, shape);
 
         let xs = Intersections::new_from_vec(vec![i1, i2]);
 
-        assert_eq!(i1, *xs.hit().unwrap());
+        assert_eq!(i1, xs.hit().unwrap());
     }
 
     #[test]
     fn hit_when_some_intersections_have_negative_t() {
         let s = Sphere::new();
-        let shape = Shape::Sphere(&s);
+        let shape = Shape::Sphere(s);
 
         let i1 = Intersection::new(-1.0, shape);
         let i2 = Intersection::new(1.0, shape);
 
         let xs = Intersections::new_from_vec(vec![i1, i2]);
 
-        assert_eq!(i2, *xs.hit().unwrap());
+        assert_eq!(i2, xs.hit().unwrap());
     }
 
 
     #[test]
     fn hit_when_all_intersections_have_negative_t() {
         let s = Sphere::new();
-        let shape = Shape::Sphere(&s);
+        let shape = Shape::Sphere(s);
 
         let i1 = Intersection::new(-2.0, shape);
         let i2 = Intersection::new(-1.0, shape);
@@ -150,7 +150,7 @@ mod tests {
     #[test]
     fn hit_is_always_lowest() {
         let s = Sphere::new();
-        let shape = Shape::Sphere(&s);
+        let shape = Shape::Sphere(s);
 
         let i1 = Intersection::new(5.0, shape);
         let i2 = Intersection::new(7.0, shape);

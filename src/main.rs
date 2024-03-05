@@ -2,6 +2,7 @@ use std::time::Instant;
 use ray_tracer_challenge::*;
 use ray_tracer_challenge::intersection::Intersections;
 use ray_tracer_challenge::shapes::{Shape, Sphere};
+use std::f64::consts::PI;
 
 fn main() {
     let start_time = Instant::now();
@@ -22,12 +23,12 @@ fn cast_ray_at_sphere() {
     let half = wall_size / 2.0;
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
-    let mut sphere = Sphere::new().with_transform(scaling(1.0, 0.5, 1.0));
+    let mut sphere = Sphere::new().with_transform(rotation_x(PI * 1.8) * scaling(0.8, 0.5, 0.8));
     let ray_origin = Tuple::point(0.0, 0.0, -5.0);
 
     // Chapter 6 additions
     sphere.material.color = Color::new(1.0, 1.0, 0.0);
-    let light_position = Tuple::point(-10.0, -10.0, -10.0);
+    let light_position = Tuple::point(15.0, -10.0, -20.0);
     let light_color = Color::white();
     let light = Light::new(light_position, light_color);
 

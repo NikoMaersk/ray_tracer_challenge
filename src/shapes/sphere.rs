@@ -24,6 +24,11 @@ impl Sphere {
         self
     }
 
+    pub fn with_material(mut self, material: Material) -> Self {
+        self.material = material;
+        self
+    }
+
     pub fn intersect(&self, ray: Ray) -> Vec<Intersection> {
         let transformed_ray = match self.transform.inverse() {
             Some(inverse) => { ray.transform(&inverse) }
@@ -40,8 +45,8 @@ impl Sphere {
         if discriminant < 0.0 {
             return vec![];
         } else {
-            let t1 = Intersection::new((-b - discriminant.sqrt()) / (2.0 * a), Shape::Sphere(self));
-            let t2 = Intersection::new((-b + discriminant.sqrt()) / (2.0 * a), Shape::Sphere(self));
+            let t1 = Intersection::new((-b - discriminant.sqrt()) / (2.0 * a), Shape::Sphere(*self));
+            let t2 = Intersection::new((-b + discriminant.sqrt()) / (2.0 * a), Shape::Sphere(*self));
 
             vec![t1, t2]
         }
@@ -146,7 +151,7 @@ mod tests {
     #[test]
     fn change_sphere_transformation() {
         let t = translation(2.0, 3.0, 4.0);
-        let mut s = Sphere::new().with_transform(t);
+        let s = Sphere::new().with_transform(t);
 
         assert_eq!(s.transform, t)
     }
@@ -154,7 +159,7 @@ mod tests {
     #[test]
     fn intersecting_a_scaled_sphere_with_a_ray() {
         let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
-        let mut s = Sphere::new().with_transform(scaling(2.0, 2.0, 2.0));
+        let s = Sphere::new().with_transform(scaling(2.0, 2.0, 2.0));
 
         let xs = s.intersect(r);
 
@@ -166,7 +171,7 @@ mod tests {
     #[test]
     fn intersecting_a_translated_sphere_with_a_ray() {
         let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
-        let mut s = Sphere::new().with_transform(translation(5.0, 0.0, 0.0));
+        let s = Sphere::new().with_transform(translation(5.0, 0.0, 0.0));
 
         let xs = s.intersect(r);
 
