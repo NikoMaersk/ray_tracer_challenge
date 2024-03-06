@@ -13,3 +13,11 @@ The primary goals of this project are:
 2. **Understanding Ray Tracing:** Deepen understanding of ray tracing techniques and computer graphics through hands-on implementation.
 
 3. **Code Quality:** Strive for clean, idiomatic, and efficient Rust code, following established coding conventions and design patterns.
+
+   
+## Examples so far
+
+![output](https://github.com/NikoMaersk/ray_tracer_challenge/assets/114466889/5b54c2e4-d181-4037-a662-d9afb7cc8a49)
+
+
+![output](https://github.com/NikoMaersk/ray_tracer_challenge/assets/114466889/65c52b96-326d-4ed4-adc0-c2c4c69ae629)
