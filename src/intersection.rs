@@ -1,4 +1,5 @@
 use std::ops::Index;
+use crate::{Ray, Tuple};
 use crate::shapes::shape_enum::Shape;
 
 #[derive(Copy, Clone, Debug)]
@@ -10,6 +11,26 @@ pub struct Intersection {
 impl Intersection {
     pub fn new(t: f64, obj: Shape) -> Self {
         Intersection { t, object: obj }
+    }
+
+    pub fn prepare_computations(&self, ray: Ray) -> Computations {
+
+        let point = ray.position(self.t);
+        let eye_v = -ray.direction;
+
+        let shape = match self.object {
+            Shape::Sphere(sphere) => {
+                sphere
+            }
+        };
+
+        let normal_v = shape.normal_at(point);
+
+
+        let comps = Computations::new(self.t, self.object, point, eye_v, normal_v);
+
+
+        comps
     }
 }
 
@@ -51,6 +72,14 @@ impl Intersections {
         self.sort()
     }
 
+    pub fn push_vec(&mut self, vec: Vec<Intersection>) {
+        for i in vec {
+            self.intersections.push(i);
+        }
+
+        self.sort();
+    }
+
     pub fn sort(&mut self) {
         self.intersections.sort_unstable_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
     }
@@ -69,10 +98,32 @@ impl<'a> Index<usize> for Intersections {
 }
 
 
+pub struct Computations {
+    pub t: f64,
+    pub object: Shape,
+    pub point: Tuple,
+    pub eye_v: Tuple,
+    pub normal_v: Tuple
+}
+
+impl Computations {
+    pub fn new(t: f64, object: Shape, point: Tuple, eye_v: Tuple, normal_v: Tuple) -> Self {
+        Computations {
+            t,
+            object,
+            point,
+            eye_v,
+            normal_v,
+        }
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use crate::shapes::sphere::Sphere;
     use crate::intersection::{Intersection, Intersections};
+    use crate::{Ray, Tuple};
     use crate::shapes::shape_enum::Shape;
 
     #[test]
@@ -116,7 +167,7 @@ mod tests {
 
         let xs = Intersections::new_from_vec(vec![i1, i2]);
 
-        assert_eq!(i1, xs.hit().unwrap());
+        assert_eq!(i1, *xs.hit().unwrap());
     }
 
     #[test]
@@ -129,7 +180,7 @@ mod tests {
 
         let xs = Intersections::new_from_vec(vec![i1, i2]);
 
-        assert_eq!(i2, xs.hit().unwrap());
+        assert_eq!(i2, *xs.hit().unwrap());
     }
 
 
@@ -160,5 +211,20 @@ mod tests {
         let xs = Intersections::new_from_vec(vec![i1, i2, i3, i4]);
 
         assert_eq!(i4, *xs.hit().unwrap());
+    }
+
+
+    #[test]
+    fn precomputing_state_of_an_intersection() {
+        let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
+        let shape = Sphere::new();
+        let i = Intersection::new(4.0, Shape::Sphere(shape));
+
+        let comps = i.prepare_computations(r);
+
+        assert_eq!(i.t, comps.t);
+        assert_eq!(Tuple::point(0.0, 0.0, -1.0), comps.point);
+        assert_eq!(Tuple::vector(0.0, 0.0, -1.0), comps.eye_v);
+        assert_eq!(Tuple::vector(0.0, 0.0, -1.0), comps.normal_v);
     }
 }
