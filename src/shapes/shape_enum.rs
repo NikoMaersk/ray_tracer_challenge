@@ -4,3 +4,7 @@ use crate::shapes::sphere::Sphere;
 pub enum Shape {
     Sphere(Sphere),
 }
+
+impl Shape {
+
+}

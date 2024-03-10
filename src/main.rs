@@ -3,49 +3,64 @@ use ray_tracer_challenge::*;
 use ray_tracer_challenge::intersection::Intersections;
 use ray_tracer_challenge::shapes::{Shape, Sphere};
 use std::f64::consts::PI;
+use std::fs::{OpenOptions};
+use std::io;
+use std::io::Write;
+use std::sync::Mutex;
+use rayon::prelude::*;
 
-fn main() {
+fn main() -> io::Result<()> {
+    let size = 2048;
+
     let start_time = Instant::now();
 
-    cast_ray_at_sphere();
+    cast_ray_at_sphere(size);
 
     let elapsed_time = start_time.elapsed();
 
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(r#"C:\tmp\tests.log"#)?;
+
+    write!(file, "Rendering {:?} pixels. Elapsed time: {:?}\n", size * size, elapsed_time)?;
+
     println!("Elapsed time: {:?}", elapsed_time);
+
+    Ok(())
 }
 
 
-fn cast_ray_at_sphere() {
-    let canvas_pixels = 1024;
+fn cast_ray_at_sphere(size: usize) {
+    let canvas_pixels = size;
     let wall_size = 7.0;
     let wall_z = 10.0;
     let pixel_size = wall_size / canvas_pixels as f64;
     let half = wall_size / 2.0;
 
-    let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
-    let mut sphere = Sphere::new().with_transform(rotation_x(PI * 1.8) * scaling(0.8, 0.5, 0.8));
+    let mut canvas_mutex = Mutex::new(Canvas::new(canvas_pixels, canvas_pixels));
+    let mut sphere = Sphere::new().with_transform(rotation_x(PI / 6.0) * scaling(1.0, 0.8, 1.1));
     let ray_origin = Tuple::point(0.0, 0.0, -5.0);
 
     // Chapter 6 additions
-    sphere.material.color = Color::new(1.0, 1.0, 0.0);
-    let light_position = Tuple::point(15.0, -10.0, -20.0);
+    sphere.material.color = Color::new(1.0, 0.0, 1.0);
+    let light_position = Tuple::point(10.0, 0.0, -10.0);
     let light_color = Color::white();
     let light = Light::new(light_position, light_color);
 
-    for y in 0..canvas_pixels {
-        let world_y = half - pixel_size * (y as f64);
-
-        for x in 0..canvas_pixels {
+    (0..canvas_pixels).into_par_iter().for_each(|y| {
+        (0..canvas_pixels).into_par_iter().for_each(|x| {
+            let world_y = half - pixel_size * (y as f64);
             let world_x = -half + pixel_size * (x as f64);
 
             let position = Tuple::point(world_x, world_y, wall_z);
+
             let ray_direction = (position - ray_origin).normalize();
             let ray = Ray::new(ray_origin, ray_direction);
 
             let xs = Intersections::new_from_vec(sphere.intersect(ray));
 
             if xs.hit().is_some() {
-                // Chapter 6 additions
                 let hit = xs.hit().unwrap();
                 let s = match hit.object {
                     Shape::Sphere(sphere) => sphere
@@ -57,12 +72,17 @@ fn cast_ray_at_sphere() {
 
                 let color = s.material.lighting(light, point, eye, normal);
 
+                let mut canvas = canvas_mutex.lock().unwrap();
                 canvas.write_pixel(x, y, color);
             }
-        }
-    }
+        });
+    });
 
-    canvas.export(r#"C:\tmp\output.png"#).expect("Couldn't create image")
+    let mut canvas = canvas_mutex.lock().unwrap();
+
+    canvas.export(r#"C:\tmp\output.png"#).expect("Couldn't create image");
+
+    drop(canvas)
 }
 
 
