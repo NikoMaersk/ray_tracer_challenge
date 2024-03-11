@@ -8,6 +8,7 @@ use std::io;
 use std::io::Write;
 use std::sync::Mutex;
 use rayon::prelude::*;
+use ray_tracer_challenge::shapes::shape_enum::*;
 
 fn main() -> io::Result<()> {
     let size = 2048;

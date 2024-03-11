@@ -1,6 +1,7 @@
 use crate::{Color, Light, Material, Ray, transformation, Tuple};
 use crate::intersection::Intersections;
 use crate::shapes::{Shape, Sphere};
+use crate::shapes::shape_enum::RayInteractable;
 
 pub struct World {
     pub objects: Vec<Shape>,
@@ -34,13 +35,7 @@ impl World {
         let mut res = Intersections::new();
 
         for shape in &self.objects {
-            let s = match shape {
-                Shape::Sphere(sphere) => {
-                    sphere
-                }
-            };
-
-            let intersections = s.intersect(ray);
+            let intersections = shape.intersect(ray);
             res.push_vec(intersections);
         }
 

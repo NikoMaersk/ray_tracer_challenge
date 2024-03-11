@@ -1,6 +1,6 @@
 use std::ops::Index;
 use crate::{Ray, Tuple};
-use crate::shapes::shape_enum::Shape;
+use crate::shapes::shape_enum::{RayInteractable, Shape};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Intersection {
@@ -19,9 +19,7 @@ impl Intersection {
         let eye_v = -ray.direction;
 
         let shape = match self.object {
-            Shape::Sphere(sphere) => {
-                sphere
-            }
+            Shape::Sphere(sphere) => { sphere }
         };
 
         let normal_v = shape.normal_at(point);

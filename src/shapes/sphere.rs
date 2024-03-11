@@ -2,7 +2,7 @@ use crate::intersection::Intersection;
 use crate::ray::Ray;
 use crate::{Matrix4, Transform, Tuple};
 use crate::materials::Material;
-use crate::shapes::shape_enum::Shape;
+use crate::shapes::shape_enum::{RayInteractable, Shape};
 
 
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -28,8 +28,12 @@ impl Sphere {
         self.material = material;
         self
     }
+}
 
-    pub fn intersect(&self, ray: Ray) -> Vec<Intersection> {
+impl RayInteractable for Sphere {
+
+    // @FIXME Possible refactor to return Intersections instead of a Vec<Intersection>
+    fn intersect(&self, ray: Ray) -> Vec<Intersection> {
         let transformed_ray = match self.transform.inverse() {
             Some(inverse) => { ray.transform(&inverse) }
             None => { return vec![] }
@@ -52,7 +56,7 @@ impl Sphere {
         }
     }
 
-    pub fn normal_at(&self, point: Tuple) -> Tuple {
+    fn normal_at(&self, point: Tuple) -> Tuple {
         let inverse_transform = match self.transform.inverse() {
             Some(matrix) => matrix,
             None => return point
@@ -82,6 +86,7 @@ mod tests {
     use crate::ray::Ray;
     use crate::shapes::sphere::Sphere;
     use crate::{Matrix4, Tuple, scaling, translation, rotation_z, Transform, Material};
+    use crate::shapes::shape_enum::RayInteractable;
 
     #[test]
     fn ray_intersects_sphere_at_two_points() {
