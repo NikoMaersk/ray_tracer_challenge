@@ -61,17 +61,14 @@ fn cast_ray_at_sphere(size: usize) {
 
             let xs = Intersections::new_from_vec(sphere.intersect(ray));
 
-            if xs.hit().is_some() {
-                let hit = xs.hit().unwrap();
-                let s = match hit.object {
-                    Shape::Sphere(sphere) => sphere
-                };
+            if let Some(hit) = xs.hit() {
+                let shape = hit.object;
 
                 let point = ray.position(hit.t);
-                let normal = s.normal_at(point);
+                let normal = shape.normal_at(point);
                 let eye = -ray.direction;
 
-                let color = s.material.lighting(light, point, eye, normal);
+                let color = shape.material().lighting(light, point, eye, normal);
 
                 let mut canvas = canvas_mutex.lock().unwrap();
                 canvas.write_pixel(x, y, color);

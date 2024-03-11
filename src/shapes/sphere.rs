@@ -69,6 +69,10 @@ impl RayInteractable for Sphere {
 
         world_normal.normalize()
     }
+
+    fn material(&self) -> Material {
+        self.material
+    }
 }
 
 impl Transform for Sphere {
