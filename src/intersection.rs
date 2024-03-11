@@ -14,7 +14,6 @@ impl Intersection {
     }
 
     pub fn prepare_computations(&self, ray: Ray) -> Computations {
-
         let point = ray.position(self.t);
         let eye_v = -ray.direction;
 
@@ -41,7 +40,7 @@ impl PartialEq for Intersection {
 
 #[derive(Debug)]
 pub struct Intersections {
-    intersections: Vec<Intersection>
+    intersections: Vec<Intersection>,
 }
 
 impl Intersections {
@@ -101,17 +100,27 @@ pub struct Computations {
     pub object: Shape,
     pub point: Tuple,
     pub eye_v: Tuple,
-    pub normal_v: Tuple
+    pub normal_v: Tuple,
+    pub inside: bool,
 }
 
 impl Computations {
     pub fn new(t: f64, object: Shape, point: Tuple, eye_v: Tuple, normal_v: Tuple) -> Self {
+        let mut is_inside = false;
+        let mut normal_v = normal_v;
+
+        if normal_v.dot(eye_v) < 0.0 {
+            is_inside = true;
+            normal_v = -normal_v;
+        }
+
         Computations {
             t,
             object,
             point,
             eye_v,
             normal_v,
+            inside: is_inside,
         }
     }
 }
@@ -224,5 +233,34 @@ mod tests {
         assert_eq!(Tuple::point(0.0, 0.0, -1.0), comps.point);
         assert_eq!(Tuple::vector(0.0, 0.0, -1.0), comps.eye_v);
         assert_eq!(Tuple::vector(0.0, 0.0, -1.0), comps.normal_v);
+    }
+
+    #[test]
+    fn hit_when_intersection_occurs_outside() {
+        let r = Ray::new(
+            Tuple::point(0.0, 0.0, -5.0),
+            Tuple::vector(0.0, 0.0, 1.0));
+
+        let shape = Sphere::new();
+        let i = Intersection::new(4.0, Shape::Sphere(shape));
+        let comps = i.prepare_computations(r);
+
+        assert_eq!(false, comps.inside)
+    }
+
+    #[test]
+    fn hit_when_intersection_occurs_inside() {
+        let r = Ray::new(
+            Tuple::point(0.0, 0.0, 0.0),
+            Tuple::vector(0.0, 0.0, 1.0));
+
+        let shape = Sphere::new();
+        let i = Intersection::new(1.0, Shape::Sphere(shape));
+        let comps = i.prepare_computations(r);
+
+        assert_eq!(Tuple::point(0.0, 0.0, 1.0), comps.point);
+        assert_eq!(Tuple::vector(0.0, 0.0, -1.0), comps.eye_v);
+        assert_eq!(true, comps.inside);
+        assert_eq!(Tuple::vector(0.0, 0.0, -1.0), comps.normal_v)
     }
 }
