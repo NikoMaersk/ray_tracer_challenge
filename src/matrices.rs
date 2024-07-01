@@ -2,6 +2,18 @@ use crate::comparison::ApproxEq;
 use crate::Tuple;
 
 
+trait Matrix {
+    fn minor(&self, row: usize, col: usize) -> f64;
+    fn cofactor(&self, row: usize, col: usize) -> f64 {
+        let minor = self.minor(row, col);
+        if (row + col) % 2 == 0 {
+            minor
+        } else {
+            -minor
+        }
+    }
+}
+
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix4 {
     pub matrix: [[f64; 4]; 4],
@@ -73,21 +85,6 @@ impl Matrix4 {
     }
 
 
-    pub fn minor(&self, row: usize, col: usize) -> f64 {
-        self.submatrix(row, col).determinant()
-    }
-
-
-    pub fn cofactor(&self, row: usize, col: usize) -> f64 {
-        let minor = self.minor(row, col);
-        if (row + col) % 2 == 0 {
-            minor
-        } else {
-            -minor
-        }
-    }
-
-
     pub fn determinant(&self) -> f64 {
         let mut result = 0.0;
         for i in 0..4 {
@@ -119,6 +116,14 @@ impl Matrix4 {
         Some(result)
     }
 }
+
+
+impl Matrix for Matrix4 {
+    fn minor(&self, row: usize, col: usize) -> f64 {
+        self.submatrix(row, col).determinant()
+    }
+}
+
 
 impl PartialEq for Matrix4 {
     fn eq(&self, other: &Self) -> bool {
@@ -250,21 +255,6 @@ impl Matrix3 {
     }
 
 
-    pub fn minor(&self, row: usize, col: usize) -> f64 {
-        self.submatrix(row, col).determinant()
-    }
-
-
-    pub fn cofactor(&self, row: usize, col: usize) -> f64 {
-        let minor = self.minor(row, col);
-        if (row + col) % 2 == 0 {
-            minor
-        } else {
-            -minor
-        }
-    }
-
-
     pub fn determinant(&self) -> f64 {
         let mut result = 0.0;
         for i in 0..3 {
@@ -272,6 +262,13 @@ impl Matrix3 {
         }
 
         result
+    }
+}
+
+
+impl Matrix for Matrix3 {
+    fn minor(&self, row: usize, col: usize) -> f64 {
+        self.submatrix(row, col).determinant()
     }
 }
 
@@ -308,7 +305,7 @@ impl PartialEq for Matrix2 {
 
 #[cfg(test)]
 mod tests {
-    use crate::matrices::{Matrix2, Matrix3, Matrix4};
+    use crate::matrices::{Matrix, Matrix2, Matrix3, Matrix4};
 
     #[test]
     fn create_4x4() {
